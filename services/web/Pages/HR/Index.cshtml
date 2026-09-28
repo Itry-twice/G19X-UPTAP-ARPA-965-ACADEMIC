@@ -1,0 +1,76 @@
+@page
+@model PluriOne.Web.Pages.HR.IndexModel
+@{
+    ViewData["Title"] = "Panel de Recursos Humanos";
+}
+<div class="page-head">
+    <div>
+        <div class="kicker">Recursos Humanos</div>
+        <h1>Panel de solicitudes</h1>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom: 20px;">
+    <div class="flex wrap">
+        <a class="btn btn-sm @(string.IsNullOrEmpty(Model.StatusFilter) ? "btn-primary" : "")" asp-page="/HR/Index">Todas</a>
+        @foreach (var s in new[] { "open", "in_progress", "resolved", "closed" })
+        {
+            <a class="btn btn-sm @(Model.StatusFilter == s ? "btn-primary" : "")" asp-page="/HR/Index" asp-route-statusFilter="@s">@s</a>
+        }
+    </div>
+</div>
+
+<div class="card">
+    @if (Model.Tickets.Count == 0)
+    {
+        <p class="muted">No hay solicitudes en este estado.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Asunto</th>
+                    <th>Solicitado por</th>
+                    <th>Categoría</th>
+                    <th>Prioridad</th>
+                    <th>Estado</th>
+                    <th>Creada</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var t in Model.Tickets)
+                {
+                    <tr>
+                        <td>@t.Subject</td>
+                        <td>@t.RequesterName</td>
+                        <td>@(t.CategoryName ?? "—")</td>
+                        <td>@t.Priority</td>
+                        <td>
+                            <form method="post" asp-page-handler="Status" asp-route-id="@t.Id" class="flex" style="gap:6px;">
+                                <select class="select" name="NewStatus" style="padding:4px 8px; font-size:0.85rem;">
+                                    @foreach (var s in new[] { "open", "in_progress", "resolved", "closed" })
+                                    {
+                                        <option value="@s" selected="@(t.Status == s)">@s</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-sm">OK</button>
+                            </form>
+                        </td>
+                        <td>@t.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                        <td class="flex" style="gap:6px;">
+                            <a class="btn btn-sm" asp-page="/Tickets/Detail" asp-route-id="@t.Id">Abrir</a>
+                            @if (t.Status is "resolved" or "closed")
+                            {
+                                <form method="post" asp-page-handler="Delete" asp-route-id="@t.Id" onsubmit="return confirm('¿Eliminar esta solicitud resuelta?');">
+                                    <button type="submit" class="btn btn-sm btn-accent">Eliminar</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

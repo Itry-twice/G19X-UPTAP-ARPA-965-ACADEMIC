@@ -1,0 +1,118 @@
+# ==========================================================================
+# PluriOne — Asistente Virtual de Integración Organizacional
+# Pipeline CI/CD (GitLab CI/CD)
+#
+# Los secretos (POSTGRES_PASSWORD, JWT_SIGNING_KEY, GROQ_API_KEY, etc.) se
+# configuran como variables CI/CD protegidas/enmascaradas en GitLab.
+# NUNCA se almacenan secretos en este archivo.
+# ==========================================================================
+
+stages:
+  - build
+  - test
+  - security
+  - docker
+  - deploy
+
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+
+# --------------------------------------------------------------------------
+# Build (.NET 9)
+# --------------------------------------------------------------------------
+build:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+  script:
+    - dotnet build services/PluriOne.Shared/PluriOne.Shared.csproj -c Release
+    - dotnet build services/auth-service/PluriOne.AuthService.csproj -c Release
+    - dotnet build services/onboarding-service/PluriOne.OnboardingService.csproj -c Release
+    - dotnet build services/hr-service/PluriOne.HrService.csproj -c Release
+    - dotnet build services/web/PluriOne.Web.csproj -c Release
+  artifacts:
+    paths:
+      - "**/bin/Release/"
+    expire_in: 1 hour
+
+# --------------------------------------------------------------------------
+# Test (.NET) — detiene el pipeline si falla
+# --------------------------------------------------------------------------
+test:
+  stage: test
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+  needs: [build]
+  script:
+    - dotnet test tests/PluriOne.Tests/PluriOne.Tests.csproj -c Release --no-restore --logger "junit"
+  artifacts:
+    reports:
+      junit: "tests/**/TestResults/*.xml"
+
+# --------------------------------------------------------------------------
+# Test (Python / AI Service) — sintaxis e imports
+# --------------------------------------------------------------------------
+test-python:
+  stage: test
+  image: python:3.12-slim
+  script:
+    - cd services/ai-service
+    - pip install --quiet -r requirements.txt
+    - python -m compileall app ingest_cli.py
+    - python -c "from app.graph.assistant_graph import _get_graph; _get_graph(); print('graph OK')"
+
+# --------------------------------------------------------------------------
+# Seguridad — análisis de dependencias
+# --------------------------------------------------------------------------
+security-scan:
+  stage: security
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+  script:
+    - dotnet list services/auth-service/PluriOne.AuthService.csproj package --vulnerable --include-transitive
+    - dotnet list services/onboarding-service/PluriOne.OnboardingService.csproj package --vulnerable --include-transitive
+    - dotnet list services/hr-service/PluriOne.HrService.csproj package --vulnerable --include-transitive
+    - dotnet list services/web/PluriOne.Web.csproj package --vulnerable --include-transitive
+  allow_failure: true
+
+security-scan-python:
+  stage: security
+  image: python:3.12-slim
+  script:
+    - cd services/ai-service
+    - pip install --quiet pip-audit
+    - pip-audit -r requirements.txt
+  allow_failure: true
+
+# --------------------------------------------------------------------------
+# Docker build + push al registry
+# --------------------------------------------------------------------------
+docker-build:
+  stage: docker
+  image: docker:27
+  services:
+    - docker:27-dind
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - docker build -t "$CI_REGISTRY_IMAGE/auth-service:$CI_COMMIT_SHA" -f services/auth-service/Dockerfile services
+    - docker build -t "$CI_REGISTRY_IMAGE/onboarding-service:$CI_COMMIT_SHA" -f services/onboarding-service/Dockerfile services
+    - docker build -t "$CI_REGISTRY_IMAGE/hr-service:$CI_COMMIT_SHA" -f services/hr-service/Dockerfile services
+    - docker build -t "$CI_REGISTRY_IMAGE/web:$CI_COMMIT_SHA" -f services/web/Dockerfile services
+    - docker build -t "$CI_REGISTRY_IMAGE/ai-service:$CI_COMMIT_SHA" services/ai-service
+    - docker push "$CI_REGISTRY_IMAGE/auth-service:$CI_COMMIT_SHA"
+    - docker push "$CI_REGISTRY_IMAGE/onboarding-service:$CI_COMMIT_SHA"
+    - docker push "$CI_REGISTRY_IMAGE/hr-service:$CI_COMMIT_SHA"
+    - docker push "$CI_REGISTRY_IMAGE/web:$CI_COMMIT_SHA"
+    - docker push "$CI_REGISTRY_IMAGE/ai-service:$CI_COMMIT_SHA"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# --------------------------------------------------------------------------
+# Deploy (placeholder — adaptar al entorno de la organización)
+# --------------------------------------------------------------------------
+deploy:
+  stage: deploy
+  image: docker:27
+  script:
+    - echo "Deploy del stack con docker compose en el entorno de staging."
+    - echo "Las variables de entorno (secretos) provienen de GitLab CI/CD."
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual

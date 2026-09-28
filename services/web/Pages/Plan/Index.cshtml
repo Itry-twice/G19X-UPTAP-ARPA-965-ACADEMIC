@@ -1,0 +1,48 @@
+@page
+@model PluriOne.Web.Pages.Plan.IndexModel
+@{
+    ViewData["Title"] = "Plan 30-60-90";
+}
+<div class="page-head">
+    <div>
+        <div class="kicker">Ruta de incorporación</div>
+        <h1>Plan 30-60-90 días</h1>
+        <p class="muted">Hitos y entregables de tu periodo de prueba.</p>
+    </div>
+</div>
+
+@foreach (var phase in Model.Phases)
+{
+    <div class="card" style="margin-bottom: 20px;">
+        <div class="flex spread wrap">
+            <h3>@phase.Name</h3>
+            <span class="badge">Días @phase.DaysStart–@phase.DaysEnd</span>
+        </div>
+        @if (!string.IsNullOrEmpty(phase.Objective))
+        {
+            <p class="muted">@phase.Objective</p>
+        }
+        <ul class="timeline">
+            @foreach (var activity in phase.Activities)
+            {
+                <li>
+                    <strong>@activity.Title</strong>
+                    @if (!string.IsNullOrEmpty(activity.Description))
+                    {
+                        <div class="small muted">@activity.Description</div>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+<div class="card flat">
+    <h3>Matriz de evaluación</h3>
+    <div class="grid grid-3 small">
+        <div><strong>40%</strong> Competencias técnicas y código limpio</div>
+        <div><strong>30%</strong> Apego a estándares y seguridad</div>
+        <div><strong>30%</strong> Trabajo en equipo y cultura ágil</div>
+    </div>
+    <p class="small muted" style="margin-top: 12px;">Se requiere una calificación mínima de 80/100 para la promoción a contrato por tiempo indeterminado.</p>
+</div>

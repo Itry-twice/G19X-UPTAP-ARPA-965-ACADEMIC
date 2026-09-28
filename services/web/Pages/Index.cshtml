@@ -1,0 +1,138 @@
+@page
+@model PluriOne.Web.Pages.IndexModel
+@inject PluriOne.Shared.Auth.ICurrentUserContext CurrentUser
+@{
+    ViewData["Title"] = "Inicio";
+    var user = CurrentUser.User;
+    var pct = Model.Progress?.Percentage ?? 0;
+}
+<div class="page-head">
+    <div>
+        <div class="kicker">Panel de bienvenida</div>
+        <h1>@Model.Greeting, @(user?.FullName ?? "colaborador")</h1>
+        @if (Model.IsColaborador)
+        {
+            <p class="muted">Tu proceso de integración en PluriOne, en un solo lugar.</p>
+        }
+        else if (Model.IsRrhh)
+        {
+            <p class="muted">Atención de solicitudes y acompañamiento a nuevos colaboradores.</p>
+        }
+        else
+        {
+            <p class="muted">Administración del sistema y de la base de conocimiento.</p>
+        }
+    </div>
+</div>
+
+@if (Model.IsColaborador)
+{
+    <div class="grid grid-4">
+        <div class="card stat">
+            <div class="num">@(Model.Progress?.Completed ?? 0)<span class="muted" style="font-size:1.2rem">/@(Model.Progress?.Total ?? 0)</span></div>
+            <div class="label">Tareas completadas</div>
+        </div>
+        <div class="card stat">
+            <div class="num">@pct%</div>
+            <div class="label">Progreso de onboarding</div>
+        </div>
+        <div class="card stat">
+            <div class="num">@Model.RecentTickets.Count</div>
+            <div class="label">Tickets recientes</div>
+        </div>
+        <div class="card stat">
+            <div class="num">@(Model.Employee?.StartDate?.ToString("dd/MM") ?? "—")</div>
+            <div class="label">Fecha de inicio</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+        <h3>Progreso de onboarding</h3>
+        <div class="progress"><span style="width: @pct%;"></span></div>
+        <div class="flex spread small muted" style="margin-top: 8px;">
+            <span>@(Model.Progress?.Pending ?? 0) pendientes</span>
+            <span>@(Model.Progress?.InProgress ?? 0) en curso</span>
+            <span>@(Model.Progress?.Completed ?? 0) completadas</span>
+        </div>
+        <div class="flex" style="margin-top: 16px;">
+            <a class="btn btn-primary" asp-page="/Onboarding/Index">Ver tareas</a>
+            <a class="btn" asp-page="/Plan/Index">Plan 30-60-90</a>
+            <a class="btn" asp-page="/Assistant/Index">Hablar con el asistente</a>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+        <div class="flex spread">
+            <h3>Tickets recientes</h3>
+            <a class="btn btn-sm" asp-page="/Tickets/Index">Ver todos</a>
+        </div>
+        @if (Model.RecentTickets.Count == 0)
+        {
+            <p class="muted">Aún no tienes tickets. Usa el asistente o crea uno manualmente.</p>
+        }
+        else
+        {
+            foreach (var t in Model.RecentTickets)
+            {
+                <div class="ticket">
+                    <span class="badge @t.Status">@t.Status</span>
+                    <div style="flex:1">
+                        <div class="subject">@t.Subject</div>
+                        <div class="meta">Solicitado por <strong>@t.RequesterName</strong> · @t.CategoryName · @t.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</div>
+                    </div>
+                    <a class="btn btn-sm" asp-page="/Tickets/Detail" asp-route-id="@t.Id">Abrir</a>
+                </div>
+            }
+        }
+    </div>
+}
+else if (Model.IsRrhh)
+{
+    <div class="grid grid-3">
+        <div class="card stat">
+            <div class="num">@Model.OpenTickets</div>
+            <div class="label">Solicitudes abiertas</div>
+        </div>
+        <div class="card stat">
+            <div class="num">@Model.TotalTickets</div>
+            <div class="label">Solicitudes totales</div>
+        </div>
+        <div class="card stat">
+            <div class="num">@(Model.TotalTickets - Model.OpenTickets)</div>
+            <div class="label">Resueltas</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+        <h3>Acciones</h3>
+        <div class="flex wrap">
+            <a class="btn btn-primary" asp-page="/HR/Index">Panel de solicitudes</a>
+            <a class="btn" asp-page="/Tickets/Index">Ver todas</a>
+            <a class="btn" asp-page="/Assistant/Index">Consultar documentos</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="grid grid-3">
+        <div class="card stat">
+            <div class="num">@Model.UserCount</div>
+            <div class="label">Usuarios registrados</div>
+        </div>
+        <div class="card stat">
+            <div class="num">@Model.AuditCount</div>
+            <div class="label">Eventos de auditoría</div>
+        </div>
+        <div class="card stat">
+            <div class="num">3</div>
+            <div class="label">Roles del sistema</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+        <h3>Acciones</h3>
+        <div class="flex wrap">
+            <a class="btn btn-primary" asp-page="/Admin/Index">Gestionar usuarios y roles</a>
+        </div>
+    </div>
+}

@@ -1,0 +1,10 @@
+@page
+@model PluriOne.Web.Pages.ErrorModel
+@{
+    ViewData["Title"] = "Error";
+}
+<div style="text-align:center; padding: 60px 0;">
+    <h1 style="font-size: 4rem; margin:0;">@Model.Code</h1>
+    <p class="muted">@Model.Message</p>
+    <a class="btn btn-primary" asp-page="/Index">Volver al inicio</a>
+</div>

@@ -1,0 +1,83 @@
+@inject ICurrentUserContext CurrentUser
+@{
+    var user = CurrentUser.User;
+    var isColaborador = user?.IsColaborador == true;
+    var isRrhh = user?.IsRrhh == true;
+    var isAdmin = user?.IsAdmin == true;
+    var path = Context.Request.Path.Value ?? "";
+    string Active(string target) => path.StartsWith(target, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · PluriOne</title>
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem("pluri.theme");
+                if (t === "dark") document.documentElement.setAttribute("data-theme", "dark");
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    @if (user is not null)
+    {
+        <nav class="navbar">
+            <div class="shell">
+                <a class="brand" asp-page="/Index"><span class="dot"></span> PluriOne</a>
+                <div class="nav-links">
+                    <a asp-page="/Index" class="@Active("/")">Inicio</a>
+                    @if (isColaborador)
+                    {
+                        <a asp-page="/Onboarding/Index" class="@Active("/Onboarding")">Onboarding</a>
+                        <a asp-page="/Plan/Index" class="@Active("/Plan")">Plan 30-60-90</a>
+                        <a asp-page="/Assistant/Index" class="@Active("/Assistant")">Asistente</a>
+                        <a asp-page="/Tickets/Index" class="@Active("/Tickets")">Tickets</a>
+                    }
+                    @if (isRrhh)
+                    {
+                        <a asp-page="/Assistant/Index" class="@Active("/Assistant")">Asistente</a>
+                        <a asp-page="/Tickets/Index" class="@Active("/Tickets")">Tickets</a>
+                        <a asp-page="/HR/Index" class="@Active("/HR")">Panel RRHH</a>
+                    }
+                    @if (isAdmin)
+                    {
+                        <a asp-page="/Admin/Index" class="@Active("/Admin")">Panel Admin</a>
+                    }
+                </div>
+                <div class="nav-right">
+                    <button type="button" id="theme-toggle" class="theme-toggle" onclick="toggleTheme()">Tema oscuro</button>
+                    <span class="user-chip">
+                        <span class="avatar">@(user.FullName.FirstOrDefault())</span>
+                        @user.FullName
+                    </span>
+                    <a asp-page="/Profile/Index" class="btn btn-ghost btn-sm">Perfil</a>
+                    <form method="post" asp-page="/Account/Logout" style="margin:0">
+                        <button type="submit" class="btn btn-sm btn-accent">Salir</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    }
+
+    <main>
+        <div class="shell">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="shell">
+            PluriOne S.A. de C.V. · Develop Talent &amp; Technology — Asistente Virtual de Integración Organizacional
+        </div>
+    </footer>
+
+    @Html.AntiForgeryToken()
+    <script src="~/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

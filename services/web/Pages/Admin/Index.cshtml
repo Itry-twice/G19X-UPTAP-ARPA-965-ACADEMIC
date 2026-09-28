@@ -1,0 +1,273 @@
+@page
+@model PluriOne.Web.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Panel de Administración";
+}
+<div class="page-head">
+    <div>
+        <div class="kicker">Administración del sistema</div>
+        <h1>Panel de Admin</h1>
+        <p class="muted">Gestión de usuarios, roles, auditoría y base de conocimiento.</p>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert @(Model.Message.Contains("No fue") || Model.Message.Contains("No puedes") ? "alert-error" : "alert-success")">@Model.Message</div>
+}
+
+<div class="stack">
+    <div class="card">
+        <h3>Usuarios</h3>
+        <table class="table">
+            <thead>
+                <tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Contraseña</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model.Users)
+                {
+                    <tr>
+                        <td>@u.FullName</td>
+                        <td class="small muted">@u.Email</td>
+                        <td>
+                            <form method="post" asp-page-handler="Role" asp-route-id="@u.Id" asp-route-Year="@Model.DisplayYear" asp-route-Month="@Model.DisplayMonth" class="flex" style="gap:6px;">
+                                <select class="select" name="NewRole" style="padding:4px 8px; font-size:0.85rem;">
+                                    @foreach (var r in new[] { "colaborador", "rrhh", "admin" })
+                                    {
+                                        <option value="@r" selected="@(u.Role == r)">@r</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-sm">OK</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="post" asp-page-handler="Status" asp-route-id="@u.Id" asp-route-isActive="@(!u.IsActive)" asp-route-Year="@Model.DisplayYear" asp-route-Month="@Model.DisplayMonth">
+                                <button type="submit" class="btn btn-sm @(u.IsActive ? "" : "btn-accent")">@(u.IsActive ? "Activo" : "Inactivo")</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="post" asp-page-handler="ResetPassword" asp-route-id="@u.Id" asp-route-Year="@Model.DisplayYear" asp-route-Month="@Model.DisplayMonth" class="flex" style="gap:6px;">
+                                <input class="input" name="ResetPassword" type="text" placeholder="Nueva clave" minlength="8" style="padding:4px 8px; font-size:0.85rem; max-width:150px;" />
+                                <button type="submit" class="btn btn-sm btn-accent" onsubmit="return confirm('¿Reiniciar la contraseña de este usuario?');">Resetear</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="grid grid-2">
+        <div class="card">
+            <h3>Nuevo usuario</h3>
+            <form method="post" asp-page-handler="CreateUser">
+                <div class="field">
+                    <label for="nf">Nombre completo</label>
+                    <input class="input" id="nf" name="NewFullName" required maxlength="120" />
+                </div>
+                <div class="field">
+                    <label for="ne">Correo</label>
+                    <input class="input" id="ne" name="NewEmail" type="email" required />
+                </div>
+                <div class="grid grid-2">
+                    <div class="field">
+                        <label for="nr">Rol</label>
+                        <select class="select" id="nr" name="NewUserRole">
+                            <option value="colaborador">colaborador</option>
+                            <option value="rrhh">rrhh</option>
+                            <option value="admin">admin</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="ncode">Código de colaborador</label>
+                        <input class="input" id="ncode" name="NewEmployeeCode" maxlength="40" placeholder="PLU-2026-XXXX" />
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="npw2">Contraseña</label>
+                    <input class="input" id="npw2" name="NewPassword" type="password" minlength="8" required />
+                </div>
+                <button type="submit" class="btn btn-primary">Crear usuario</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>Solicitudes escaladas</h3>
+            @if (Model.EscalatedTickets.Count == 0)
+            {
+                <p class="muted">No hay solicitudes escaladas.</p>
+            }
+            else
+            {
+                foreach (var t in Model.EscalatedTickets)
+                {
+                    <div class="ticket">
+                        <span class="badge @t.Status">@t.Status</span>
+                        <div style="flex:1">
+                            <div class="subject">@t.Subject</div>
+                            <div class="meta">Solicitado por <strong>@t.RequesterName</strong> · @(t.CategoryName ?? "Sin categoría") · @t.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</div>
+                        </div>
+                        <a class="btn btn-sm" asp-page="/Tickets/Detail" asp-route-id="@t.Id">Abrir</a>
+                        @if (t.Status is "resolved" or "closed")
+                        {
+                            <form method="post" asp-page-handler="DeleteTicket" asp-route-id="@t.Id" onsubmit="return confirm('¿Eliminar esta solicitud resuelta?');">
+                                <button type="submit" class="btn btn-sm btn-accent">Eliminar</button>
+                            </form>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="flex spread">
+            <h3>Base de conocimiento (RAG)</h3>
+            <form method="post" asp-page-handler="Ingest">
+                <button type="submit" class="btn btn-accent btn-sm">Re-ingestar documentos</button>
+            </form>
+        </div>
+        <p class="small muted">Arrastra un documento nuevo (.md, .txt, .html) o re-ingesta los existentes.</p>
+        <div id="dropzone" class="dropzone">
+            <p>Arrastra aquí un documento o haz clic para seleccionarlo</p>
+            <input type="file" id="file-input" accept=".md,.txt,.html,.htm" hidden />
+        </div>
+        <div id="upload-status" class="small muted" style="margin-top: 8px;"></div>
+
+        <div style="margin-top: 16px; border-top: 2px solid var(--ink); padding-top: 12px;">
+            <h4>Documentos indexados (@Model.Documents.Count)</h4>
+            @if (Model.Documents.Count == 0)
+            {
+                <p class="muted">No hay documentos indexados.</p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr><th>Documento</th><th>Chunks</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var d in Model.Documents)
+                        {
+                            <tr>
+                                <td>@d.Name</td>
+                                <td>@d.Chunks</td>
+                                <td>
+                                    <form method="post" asp-page-handler="DeleteDocument" asp-route-id="@d.Id" asp-route-Year="@Model.DisplayYear" asp-route-Month="@Model.DisplayMonth" onsubmit="return confirm('¿Eliminar el documento @d.Name?');">
+                                        <button type="submit" class="btn btn-sm btn-accent">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        @{
+            var prev = new DateTime(Model.DisplayYear, Model.DisplayMonth, 1).AddMonths(-1);
+            var next = new DateTime(Model.DisplayYear, Model.DisplayMonth, 1).AddMonths(1);
+        }
+        <div class="flex spread" style="margin-bottom: 12px;">
+            <h3>Auditoría de accesos</h3>
+            <div class="flex" style="gap:6px;">
+                <a class="btn btn-sm" asp-page="/Admin/Index" asp-route-Year="@prev.Year" asp-route-Month="@prev.Month">←</a>
+                <span style="font-weight:800; text-transform:capitalize;">@Model.MonthName</span>
+                <a class="btn btn-sm" asp-page="/Admin/Index" asp-route-Year="@next.Year" asp-route-Month="@next.Month">→</a>
+            </div>
+        </div>
+
+        <div class="calendar">
+            @foreach (var w in new[] { "L", "M", "X", "J", "V", "S", "D" })
+            {
+                <span class="weekday">@w</span>
+            }
+            @foreach (var cell in Model.CalendarDays)
+            {
+                if (cell.Day is null)
+                {
+                    <span class="day empty"></span>
+                }
+                else
+                {
+                    var cls = "day" + (cell.HasActivity ? " has-activity" : "") + (cell.IsSelected ? " selected" : "");
+                    <a class="@cls" asp-page="/Admin/Index" asp-route-Date="@cell.Date">@cell.Day</a>
+                }
+            }
+        </div>
+
+        <div style="margin-top: 16px; border-top: 2px solid var(--ink); padding-top: 12px;">
+            @if (Model.SelectedDate.HasValue)
+            {
+                <h4>Actividad del @Model.SelectedDate.Value.ToString("dd/MM/yyyy")</h4>
+                @if (Model.DayEvents.Count == 0)
+                {
+                    <p class="muted">Sin actividad registrada este día.</p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr><th>Hora</th><th>Usuario</th><th>Acción</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var e in Model.DayEvents)
+                            {
+                                <tr>
+                                    <td class="small muted">@e.CreatedAt.ToLocalTime().ToString("HH:mm")</td>
+                                    <td>@(string.IsNullOrEmpty(e.UserName) ? "—" : e.UserName)</td>
+                                    <td>@PluriOne.Web.Pages.Admin.IndexModel.FriendlyAction(e.Action)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            }
+            else
+            {
+                <p class="muted">Selecciona un día del calendario para ver quién accedió.</p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+  const dz = document.getElementById('dropzone');
+  const input = document.getElementById('file-input');
+  const status = document.getElementById('upload-status');
+  if (!dz) return;
+
+  function upload(file) {
+    status.textContent = 'Subiendo "' + file.name + '"...';
+    const fd = new FormData();
+    fd.append('file', file);
+    fetch('/api/admin/upload', {
+      method: 'POST',
+      headers: { 'RequestVerificationToken': csrfToken() },
+      body: fd
+    }).then(async (resp) => {
+      const text = await resp.text();
+      let msg = text;
+      try { const j = JSON.parse(text); msg = j.detail || j.message || j.filename || text; } catch (e) {}
+      if (resp.ok) {
+        status.textContent = 'Documento "' + file.name + '" subido e indexado correctamente.';
+      } else {
+        status.textContent = 'Error: ' + msg;
+      }
+    }).catch(() => {
+      status.textContent = 'Error al subir el documento.';
+    });
+  }
+
+  dz.addEventListener('click', () => input.click());
+  input.addEventListener('change', () => { if (input.files.length) upload(input.files[0]); });
+  ['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('dragover'); }));
+  ['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('dragover'); }));
+  dz.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) upload(f); });
+})();
+</script>
+}

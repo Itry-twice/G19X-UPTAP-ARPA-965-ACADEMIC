@@ -1,0 +1,64 @@
+@page
+@model PluriOne.Web.Pages.Onboarding.IndexModel
+@{
+    ViewData["Title"] = "Onboarding";
+    var pct = Model.Progress?.Percentage ?? 0;
+}
+<div class="page-head">
+    <div>
+        <div class="kicker">Onboarding</div>
+        <h1>Mi checklist de integración</h1>
+    </div>
+    <a class="btn" asp-page="/Plan/Index">Ver plan 30-60-90</a>
+</div>
+
+<div class="card" style="margin-bottom: 20px;">
+    <div class="flex spread">
+        <h3>Progreso</h3>
+        <span class="badge completed">@pct%</span>
+    </div>
+    <div class="progress"><span style="width: @pct%;"></span></div>
+</div>
+
+<div class="card">
+    @foreach (var t in Model.Tasks)
+    {
+        var isDone = t.Status == "completed";
+        <div class="task @(isDone ? "done" : "")" data-task-id="@t.TaskId">
+            <div class="check" role="button" tabindex="0" aria-label="Marcar tarea"
+                 data-status="@(isDone ? "completed" : "pending")">@(isDone ? "✓" : "")</div>
+            <div class="body">
+                <div class="title">@t.Title</div>
+                @if (!string.IsNullOrEmpty(t.Description))
+                {
+                    <div class="meta">@t.Description</div>
+                }
+                <div class="meta">@(t.Category ?? "general")@(t.IsRequired ? " · obligatoria" : "")</div>
+            </div>
+            <span class="badge @t.Status">@t.Status</span>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+(function () {
+  document.querySelectorAll('.task .check').forEach(function (check) {
+    check.addEventListener('click', async function () {
+      const task = check.closest('.task');
+      const id = task.getAttribute('data-task-id');
+      const currentlyDone = check.getAttribute('data-status') === 'completed';
+      const nextStatus = currentlyDone ? 'pending' : 'completed';
+      try {
+        const resp = await apiFetch('/api/onboarding/tasks/' + id + '/status', {
+          method: 'POST',
+          headers: csrfHeaders(),
+          body: JSON.stringify({ status: nextStatus })
+        });
+        if (resp.ok) { window.location.reload(); }
+      } catch (e) { /* ignore */ }
+    });
+  });
+})();
+</script>
+}

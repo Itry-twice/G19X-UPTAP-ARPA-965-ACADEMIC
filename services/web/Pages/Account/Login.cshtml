@@ -1,0 +1,64 @@
+@page
+@model PluriOne.Web.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Iniciar sesión";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar sesión · PluriOne</title>
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem("pluri.theme");
+                if (t === "dark") document.documentElement.setAttribute("data-theme", "dark");
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="auth-wrap">
+        <div class="card">
+            <div class="flex spread" style="margin-bottom: 12px;">
+                <div class="brand" style="color: var(--ink); font-size: 1.3rem;">
+                    <span class="dot" style="border-color: var(--ink);"></span> PluriOne
+                </div>
+                <button type="button" id="theme-toggle" class="theme-toggle" style="color: var(--ink); border-color: var(--ink);" onclick="toggleTheme()">Tema oscuro</button>
+            </div>
+            <p class="muted">Develop Talent &amp; Technology</p>
+            <h1 style="margin-top: 8px;">Acceso</h1>
+
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <div class="alert alert-error">@Model.Error</div>
+            }
+
+            <form method="post">
+                <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+                <div class="field">
+                    <label for="email">Correo corporativo</label>
+                    <input class="input" id="email" name="Email" type="email" autocomplete="username" required />
+                </div>
+                <div class="field">
+                    <label for="password">Contraseña</label>
+                    <input class="input" id="password" name="Password" type="password" autocomplete="current-password" required />
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+            </form>
+
+            <div class="small muted" style="margin-top: 20px; border-top: 2px solid var(--ink); padding-top: 14px;">
+                <strong>Credenciales DEMO:</strong><br />
+                colaborador — mariana.lopez&#64;example.com<br />
+                RRHH — rrhh&#64;example.com<br />
+                admin — admin&#64;example.com<br />
+                contraseña: <code>PluriOne#2026</code>
+            </div>
+        </div>
+    </div>
+    <script src="~/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+@page
+@model PluriOne.Web.Pages.Assistant.IndexModel
+@{
+    ViewData["Title"] = "Asistente";
+}
+<div class="page-head">
+    <div>
+        <div class="kicker">IA + RAG</div>
+        <h1>Asistente Virtual</h1>
+        <p class="muted">Pregunta sobre horarios, esquema híbrido, políticas o tu integración.</p>
+    </div>
+</div>
+
+<div class="card" style="display:flex; flex-direction:column; height: 60vh;">
+    <div class="chat" id="chat" style="flex:1; overflow-y:auto; padding-right:4px;">
+        <div class="msg system">Hola, soy tu asistente de integración. Pregúntame lo que necesites.</div>
+    </div>
+    <form id="chat-form" style="display:flex; gap:10px; margin-top:16px; border-top:2px solid var(--ink); padding-top:16px;">
+        <input id="chat-input" class="input" type="text" maxlength="2000" placeholder="Escribe tu pregunta…" autocomplete="off" />
+        <button id="chat-send" class="btn btn-primary" type="submit">Enviar</button>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+  const chat = document.getElementById('chat');
+  const form = document.getElementById('chat-form');
+  const input = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('chat-send');
+
+  function addMessage(role, text) {
+    const msg = el('div', 'msg ' + role);
+    const who = el('div', 'who', role === 'user' ? 'Tú' : 'Asistente');
+    const content = el('div', 'content');
+    content.appendChild(renderContent(text));
+    msg.appendChild(who);
+    msg.appendChild(content);
+    chat.appendChild(msg);
+    chat.scrollTop = chat.scrollHeight;
+    return content;
+  }
+
+  function renderContent(text) {
+    const frag = document.createDocumentFragment();
+    const escaped = escapeHtml(text);
+    const lines = escaped.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      if (i > 0) frag.appendChild(document.createElement('br'));
+      const seg = document.createElement('span');
+      seg.innerHTML = lines[i].replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      frag.appendChild(seg);
+    }
+    return frag;
+  }
+
+  function appendSources(content, sources) {
+    if (!sources || sources.length === 0) return;
+    const div = el('div', 'sources', 'Fuentes: ' + sources.join(', '));
+    content.appendChild(div);
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const question = input.value.trim();
+    if (!question) return;
+
+    addMessage('user', question);
+    input.value = '';
+    sendBtn.disabled = true;
+
+    const content = addMessage('assistant', '');
+    const tmp = document.createElement('span');
+    content.appendChild(tmp);
+
+    try {
+      const resp = await fetch('/api/assistant/stream', {
+        method: 'POST',
+        headers: csrfHeaders(),
+        body: JSON.stringify({ question })
+      });
+
+      if (!resp.ok) {
+        tmp.textContent = 'No fue posible obtener una respuesta.';
+        return;
+      }
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split('\n\n');
+        buffer = parts.pop();
+        for (const part of parts) {
+          const line = part.trim();
+          if (!line.startsWith('data:')) continue;
+          const payload = line.slice(5).trim();
+          if (!payload) continue;
+          const evt = JSON.parse(payload);
+          if (evt.type === 'token') {
+            tmp.textContent += evt.content;
+          } else if (evt.type === 'sources') {
+            appendSources(content, evt.sources);
+          } else if (evt.type === 'error') {
+            if (!tmp.textContent) tmp.textContent = evt.message;
+          }
+          chat.scrollTop = chat.scrollHeight;
+        }
+      }
+    } catch (err) {
+      if (!tmp.textContent) tmp.textContent = 'Ocurrió un error al comunicarse con el asistente.';
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  });
+
+  input.focus();
+})();
+</script>
+}

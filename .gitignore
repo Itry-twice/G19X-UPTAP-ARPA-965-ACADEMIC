@@ -1,0 +1,39 @@
+# Environment / secrets
+.env
+*.env
+!.env.example
+
+# .NET
+**/bin/
+**/obj/
+*.user
+.vs/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Node (si aplica)
+node_modules/
+
+# Knowledge base artifacts (generated)
+knowledge-base/data/
+knowledge-base/chunks/
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Test results
+TestResults/
+**/coverage/

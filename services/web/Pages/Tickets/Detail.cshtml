@@ -1,0 +1,120 @@
+@page "{id:guid}"
+@model PluriOne.Web.Pages.Tickets.DetailModel
+@{
+    ViewData["Title"] = "Detalle de solicitud";
+    var t = Model.Ticket;
+}
+@if (t is null)
+{
+    <div class="alert alert-error">Solicitud no encontrada.</div>
+    <a class="btn" asp-page="/Tickets/Index">Volver</a>
+    return;
+}
+
+<div class="page-head">
+    <div>
+        <div class="kicker">Solicitud</div>
+        <h1>@t.Subject</h1>
+    </div>
+    <a class="btn" asp-page="/Tickets/Index">Volver</a>
+</div>
+
+<div class="grid grid-2">
+    <div class="card">
+        <div class="flex wrap" style="margin-bottom: 12px;">
+            <span class="badge @t.Status">@t.Status</span>
+            <span class="badge">@t.Priority</span>
+            @if (!string.IsNullOrEmpty(t.CategoryName))
+            {
+                <span class="badge">@t.CategoryName</span>
+            }
+        </div>
+        <p class="small muted">Solicitado por <strong>@t.RequesterName</strong> · @t.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm") · Origen: @t.Source</p>
+
+        @if (!string.IsNullOrEmpty(t.Description))
+        {
+            <p>@t.Description</p>
+        }
+        else
+        {
+            <p class="muted">Sin descripción.</p>
+        }
+    </div>
+
+    <div>
+        @if (Model.IsStaff)
+        {
+            <div class="card">
+                <h3>Gestionar estado</h3>
+                @if (!string.IsNullOrEmpty(Model.Error))
+                {
+                    <div class="alert alert-error">@Model.Error</div>
+                }
+                <form method="post" asp-page-handler="Status" asp-route-id="@t.Id">
+                    <div class="flex">
+                        <select class="select" name="NewStatus">
+                            @foreach (var s in new[] { "open", "in_progress", "resolved", "closed" })
+                            {
+                                <option value="@s" selected="@(t.Status == s)">@s</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                    </div>
+                </form>
+
+                @if (!t.Escalated)
+                {
+                    <form method="post" asp-page-handler="Escalate" asp-route-id="@t.Id" style="margin-top: 12px;">
+                        <button type="submit" class="btn btn-accent">Escalar a administrador</button>
+                    </form>
+                }
+                else
+                {
+                    <span class="badge">Escalada a administrador</span>
+                }
+
+                @if (t.Status is "resolved" or "closed")
+                {
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@t.Id" style="margin-top: 12px;" onsubmit="return confirm('¿Eliminar esta solicitud resuelta?');">
+                        <button type="submit" class="btn btn-accent">Eliminar solicitud</button>
+                    </form>
+                }
+            </div>
+        }
+
+        <div class="card" style="margin-top: 20px;">
+            <h3>Historial</h3>
+            <ul class="timeline">
+                @foreach (var h in t.History)
+                {
+                    <li>@(h.FromStatus ?? "—") → <strong>@h.ToStatus</strong>
+                        <span class="small muted">· @h.ChangedAt.ToLocalTime().ToString("dd/MM HH:mm")</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 20px;">
+    <h3>Comentarios (@t.Comments.Count)</h3>
+    @if (t.Comments.Count == 0)
+    {
+        <p class="muted">Sin comentarios todavía.</p>
+    }
+    @foreach (var c in t.Comments)
+    {
+        <div style="border:2px solid var(--ink); border-radius:var(--radius); padding:10px 14px; margin-bottom:10px;">
+            <div class="small muted"><strong>@c.AuthorName</strong> · @c.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+            <p style="margin:4px 0 0;">@c.Body</p>
+        </div>
+    }
+
+    <form method="post" asp-page-handler="Comment" asp-route-id="@t.Id">
+        <div class="field">
+            <label for="comment">Agregar comentario</label>
+            <textarea class="textarea" id="comment" name="CommentBody" maxlength="2000"></textarea>
+        </div>
+        <button type="submit" class="btn btn-accent">Comentar</button>
+    </form>
+</div>

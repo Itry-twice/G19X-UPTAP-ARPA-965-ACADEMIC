@@ -1,0 +1,74 @@
+@page
+@model PluriOne.Web.Pages.Tickets.IndexModel
+@{
+    ViewData["Title"] = "Tickets";
+}
+<div class="page-head">
+    <div>
+        <div class="kicker">Recursos Humanos</div>
+        <h1>Mis solicitudes</h1>
+    </div>
+</div>
+
+@if (Model.CanCreate)
+{
+    <div class="card" style="margin-bottom: 20px;">
+        <h3>Nueva solicitud</h3>
+        @if (!string.IsNullOrEmpty(Model.Error))
+        {
+            <div class="alert alert-error">@Model.Error</div>
+        }
+        <form method="post">
+            <div class="field">
+                <label for="subject">Asunto</label>
+                <input class="input" id="subject" name="Subject" required maxlength="200" />
+            </div>
+            <div class="field">
+                <label for="description">Descripción</label>
+                <textarea class="textarea" id="description" name="Description" maxlength="2000"></textarea>
+            </div>
+            <div class="grid grid-2">
+                <div class="field">
+                    <label for="category">Categoría</label>
+                    <select class="select" id="category" name="CategoryId">
+                        <option value="">— Sin categoría —</option>
+                        @foreach (var c in Model.Categories)
+                        {
+                            <option value="@c.Id">@c.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="priority">Prioridad</label>
+                    <select class="select" id="priority" name="Priority">
+                        <option value="normal">Normal</option>
+                        <option value="low">Baja</option>
+                        <option value="high">Alta</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Crear solicitud</button>
+        </form>
+    </div>
+}
+
+<div class="card">
+    @if (Model.Tickets.Count == 0)
+    {
+        <p class="muted">No tienes solicitudes todavía.</p>
+    }
+    else
+    {
+        foreach (var t in Model.Tickets)
+        {
+            <div class="ticket">
+                <span class="badge @t.Status">@t.Status</span>
+                <div style="flex:1">
+                    <div class="subject">@t.Subject</div>
+                    <div class="meta">Solicitado por <strong>@t.RequesterName</strong> · @(t.CategoryName ?? "Sin categoría") · @t.Priority · @t.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</div>
+                </div>
+                <a class="btn btn-sm" asp-page="/Tickets/Detail" asp-route-id="@t.Id">Abrir</a>
+            </div>
+        }
+    }
+</div>

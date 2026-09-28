@@ -1,0 +1,69 @@
+@page
+@model PluriOne.Web.Pages.Profile.IndexModel
+@{
+    ViewData["Title"] = "Perfil";
+    var u = Model.AccountUser;
+}
+<div class="page-head">
+    <div>
+        <div class="kicker">Cuenta</div>
+        <h1>Mi perfil</h1>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-success">@Model.Message</div>
+}
+@if (!string.IsNullOrEmpty(Model.Error))
+{
+    <div class="alert alert-error">@Model.Error</div>
+}
+
+<div class="grid grid-2">
+    <div class="card">
+        <div class="flex" style="margin-bottom: 16px;">
+            <span class="avatar" style="width:52px;height:52px;font-size:1.3rem;">@(u?.FullName.FirstOrDefault())</span>
+            <div>
+                <h3 style="margin:0;">@u?.FullName</h3>
+                <span class="badge role-@u?.Role">@u?.Role</span>
+            </div>
+        </div>
+        <table class="table">
+            <tr><th>Correo</th><td>@u?.Email</td></tr>
+            <tr><th>Rol</th><td>@u?.Role</td></tr>
+        </table>
+    </div>
+
+    <div>
+        <div class="card">
+            <h3>Cambiar nombre</h3>
+            <form method="post" asp-page-handler="UpdateName">
+                <div class="field">
+                    <label for="fullname">Nombre completo</label>
+                    <input class="input" id="fullname" name="FullName" value="@u?.FullName" maxlength="120" />
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar nombre</button>
+            </form>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+            <h3>Cambiar contraseña</h3>
+            <form method="post" asp-page-handler="ChangePassword">
+                <div class="field">
+                    <label for="cpw">Contraseña actual</label>
+                    <input class="input" id="cpw" name="CurrentPassword" type="password" autocomplete="current-password" />
+                </div>
+                <div class="field">
+                    <label for="npw">Nueva contraseña</label>
+                    <input class="input" id="npw" name="NewPassword" type="password" autocomplete="new-password" minlength="8" />
+                </div>
+                <div class="field">
+                    <label for="cfpw">Confirmar nueva contraseña</label>
+                    <input class="input" id="cfpw" name="ConfirmPassword" type="password" autocomplete="new-password" />
+                </div>
+                <button type="submit" class="btn btn-accent">Cambiar contraseña</button>
+            </form>
+        </div>
+    </div>
+</div>
