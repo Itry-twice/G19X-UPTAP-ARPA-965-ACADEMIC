@@ -48,16 +48,17 @@ test:
       junit: "tests/**/TestResults/*.xml"
 
 # --------------------------------------------------------------------------
-# Test (Python / AI Service) — sintaxis e imports
+# Test (Python / AI Service) — sintaxis, imports y pytest
 # --------------------------------------------------------------------------
 test-python:
   stage: test
   image: python:3.12-slim
   script:
     - cd services/ai-service
-    - pip install --quiet -r requirements.txt
+    - pip install --quiet -r requirements.txt pytest
     - python -m compileall app ingest_cli.py
     - python -c "from app.graph.assistant_graph import _get_graph; _get_graph(); print('graph OK')"
+    - python -m pytest tests -v
 
 # --------------------------------------------------------------------------
 # Seguridad — análisis de dependencias

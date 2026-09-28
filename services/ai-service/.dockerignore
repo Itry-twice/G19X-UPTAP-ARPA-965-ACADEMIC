@@ -4,3 +4,6 @@ __pycache__/
 venv/
 .env
 *.log
+tests/
+.pytest_cache/
+conftest.py

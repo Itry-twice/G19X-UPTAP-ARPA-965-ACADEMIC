@@ -121,4 +121,89 @@ public sealed class HrManagerTests
 
         Assert.False(ok);
     }
+
+    [Fact]
+    public async Task Escalate_RrhhSetsEscalatedFlag()
+    {
+        await using var db = CreateDb();
+        var manager = new HrManager(db);
+
+        var (ticket, _) = await manager.CreateTicketAsync(Colaborador(), new CreateTicketRequest("t", null, null, "normal", null));
+        var (ok, error) = await manager.EscalateAsync(Rrhh(), ticket!.Id);
+
+        Assert.True(ok);
+        Assert.Null(error);
+        var persisted = await db.Tickets.FirstAsync(t => t.Id == ticket.Id);
+        Assert.True(persisted.Escalated);
+    }
+
+    [Fact]
+    public async Task Escalate_ColaboradorIsForbidden()
+    {
+        await using var db = CreateDb();
+        var manager = new HrManager(db);
+
+        var (ticket, _) = await manager.CreateTicketAsync(Colaborador(), new CreateTicketRequest("t", null, null, "normal", null));
+        var (ok, error) = await manager.EscalateAsync(Colaborador(), ticket!.Id);
+
+        Assert.False(ok);
+        Assert.Equal("forbidden", error);
+    }
+
+    [Fact]
+    public async Task Delete_OpenTicketIsRejected()
+    {
+        await using var db = CreateDb();
+        var manager = new HrManager(db);
+
+        var (ticket, _) = await manager.CreateTicketAsync(Colaborador(), new CreateTicketRequest("t", null, null, "normal", null));
+        var (ok, error) = await manager.DeleteAsync(Rrhh(), ticket!.Id);
+
+        Assert.False(ok);
+        Assert.Equal("not_resolved", error);
+    }
+
+    [Fact]
+    public async Task Delete_ColaboradorIsForbidden()
+    {
+        await using var db = CreateDb();
+        var manager = new HrManager(db);
+
+        var (ticket, _) = await manager.CreateTicketAsync(Colaborador(), new CreateTicketRequest("t", null, null, "normal", null));
+        var (ok, error) = await manager.DeleteAsync(Colaborador(), ticket!.Id);
+
+        Assert.False(ok);
+        Assert.Equal("forbidden", error);
+    }
+
+    [Fact]
+    public async Task Delete_ResolvedTicketByRrhhSucceeds()
+    {
+        await using var db = CreateDb();
+        var manager = new HrManager(db);
+
+        var (ticket, _) = await manager.CreateTicketAsync(Colaborador(), new CreateTicketRequest("t", null, null, "normal", null));
+        await manager.UpdateStatusAsync(Rrhh(), ticket!.Id, "resolved", null);
+
+        var (ok, error) = await manager.DeleteAsync(Rrhh(), ticket.Id);
+
+        Assert.True(ok);
+        Assert.Null(error);
+        Assert.False(await db.Tickets.AnyAsync(t => t.Id == ticket.Id));
+    }
+
+    [Fact]
+    public async Task Delete_ResolvedTicketByAdminSucceeds()
+    {
+        await using var db = CreateDb();
+        var manager = new HrManager(db);
+
+        var (ticket, _) = await manager.CreateTicketAsync(Colaborador(), new CreateTicketRequest("t", null, null, "normal", null));
+        await manager.UpdateStatusAsync(Rrhh(), ticket!.Id, "closed", null);
+
+        var (ok, error) = await manager.DeleteAsync(new CurrentUser(Guid.Parse("11111111-1111-1111-1111-111111111111"), "a@example.com", "A", "admin"), ticket.Id);
+
+        Assert.True(ok);
+        Assert.Null(error);
+    }
 }

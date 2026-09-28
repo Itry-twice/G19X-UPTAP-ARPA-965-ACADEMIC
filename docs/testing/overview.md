@@ -6,12 +6,26 @@
 dotnet test tests/PluriOne.Tests/PluriOne.Tests.csproj
 ```
 
-Cobertura:
+Cobertura (25 pruebas):
 
 - `PasswordHasherTests` — Argon2id (hash/verify, salting, sin texto plano).
 - `JwtTokenServiceTests` — claims, issuer/audiencia, validación.
-- `HrManagerTests` — creación de ticket (requester = usuario), rechazo de prioridad inválida, aislamiento por propietario (IDOR), listado para RRHH, prohibición de cambio de estado para colaborador, historial, comentarios.
+- `HrManagerTests` — creación de ticket (requester = usuario), rechazo de prioridad inválida, aislamiento por propietario (IDOR), listado para RRHH, prohibición de cambio de estado para colaborador, historial, comentarios, escalamiento (solo RRHH) y eliminación (solo resueltas/cerradas, por RRHH/admin).
 - `OnboardingManagerTests` — asignación de tareas, idempotencia, validación de estado, progreso.
+
+## Pruebas unitarias (AI Service — pytest)
+
+```bash
+cd services/ai-service
+pip install pytest
+python -m pytest tests -v
+```
+
+Cobertura (17 pruebas):
+
+- `test_ingest.py` — limpieza de markdown, chunking, división por encabezados y metadata (incluye que el encabezado se mantiene con su contenido).
+- `test_hash_provider.py` — embeddings determinísticos, normalizados y de dimensión correcta.
+- `test_rate_limit.py` — límite, expiración de ventana e independencia de claves.
 
 ## Pruebas de integración (stack Docker)
 
@@ -21,7 +35,7 @@ Levantar el stack y validar end-to-end:
 2. Onboarding: creación de empleado, tareas, progreso, plan.
 3. HR: creación de ticket, listado por rol, cambio de estado (RRHH), comentarios.
 4. RLS: un colaborador no accede a tickets ajenos (verificado a nivel de base de datos).
-5. AI: ingesta de `docs-source/` (40 chunks en pgvector) y respuesta con/sin API key.
+5. AI: ingesta de `docs-source/` (chunks en pgvector) y respuesta con/sin API key.
 
 ## Pruebas de seguridad
 
