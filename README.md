@@ -39,31 +39,50 @@ Browser → Nginx → Web/BFF → { AuthService, OnboardingService, HrService, A
 
 ## Puesta en marcha
 
+### 1. Requisitos
+
+- **Docker** y **Docker Compose** instalados y en ejecución.
+
+### 2. Configurar variables de entorno
+
 ```bash
-# 1. Copiar la plantilla de variables de entorno y completar los secretos
+# Copia la plantilla (contiene placeholders, NO claves reales)
 cp .env.example .env
+```
 
-# 2. Construir y levantar todos los servicios
+Abre `.env` y completa al menos:
+- `GROQ_API_KEY` — tu clave de Groq (necesaria para que el asistente responda).
+- `POSTGRES_PASSWORD`, `REDIS_PASSWORD`, `SVC_*_PASSWORD`, `JWT_SIGNING_KEY` — cualquier valor seguro.
+
+### 3. Construir y levantar los servicios
+
+```bash
 docker compose up -d --build
+```
 
-# 3. Verificar el estado
+> La primera vez descarga las imágenes y el modelo de embeddings (puede tardar varios minutos).
+
+### 4. Verificar
+
+```bash
 docker compose ps
 ```
 
-La aplicación queda disponible en **http://localhost** (Nginx, puerto 80).
+Todos los servicios deben estar `Up` (`postgres` y `redis` en `healthy`). La aplicación queda en **http://localhost**.
 
-> La primera vez, los scripts de `infrastructure/postgres/init/` crean el esquema, roles de menor privilegio y políticas **RLS**, y siembran los catálogos (plan 30-60-90, tareas, categorías). Los usuarios DEMO se siembran en tiempo de ejecución por AuthService.
-
-### Ingesta de la base de conocimiento (RAG)
+### 5. Ingerir la base de conocimiento (para que el asistente responda)
 
 ```bash
-# Opción A: vía CLI dentro del contenedor
 docker exec -it plurione-ai-service python ingest_cli.py
-
-# Opción B: vía API (requiere rol admin)
-# POST http://localhost/api/assistant/...  (a través del BFF) o
-# POST http://ai-service:8080/ingest con Bearer token de un usuario admin
 ```
+
+Alternativa: en el **Panel Admin**, botón "Re-ingestar documentos".
+
+### 6. Entrar
+
+Usa las **Credenciales DEMO** de la siguiente sección.
+
+> La primera vez, `infrastructure/postgres/init/` crea el esquema, los roles y las políticas **RLS**, y siembra los catálogos. Los usuarios DEMO se crean automáticamente por AuthService.
 
 ---
 
@@ -147,10 +166,19 @@ Ver `docs/security/`.
 ## Pruebas
 
 ```bash
+# Pruebas unitarias .NET (25)
 dotnet test tests/PluriOne.Tests/PluriOne.Tests.csproj
+
+# Pruebas unitarias del AI Service (17)
+cd services/ai-service
+pip install pytest
+python -m pytest tests -v
+
+# Pruebas de integración end-to-end (requiere el stack en ejecución)
+python tests/e2e/integration_test.py
 ```
 
-Cobertura: hashing de contraseñas (Argon2id), emisión/validación de JWT, autorización de HR (IDOR/roles), onboarding (tareas/progreso). Las políticas RLS se validan de forma integral con el stack Docker (ver `docs/testing/`).
+Cobertura: Argon2id, JWT, autorización de HR (IDOR/roles), onboarding, ingesta/RAG, rate limiting, y flujos críticos (login por rol, RLS, escalamiento, RAG). Ver `docs/testing/`.
 
 ---
 
@@ -158,7 +186,7 @@ Cobertura: hashing de contraseñas (Argon2id), emisión/validación de JWT, auto
 
 ```
 docs-source/            # Documentos de referencia (no modificar)
-docs/                   # PRD, arquitectura, API, seguridad, ADRs
+docs/                   # Documentación técnica (arquitectura, API, seguridad, ADRs)
 infrastructure/
   postgres/init/        # Migraciones SQL (schema, RLS, seed)
   nginx/                # Reverse proxy
@@ -179,7 +207,6 @@ docker-compose.yml
 
 ## Documentación
 
-- `docs/PRD.md` — requerimientos y análisis
 - `docs/architecture/overview.md` — arquitectura y diagramas
-- `docs/decisions/` — ADRs
+- `docs/decisions/` — ADRs (decisiones de arquitectura)
 - `docs/api/`, `docs/security/`, `docs/deployment/`, `docs/testing/`

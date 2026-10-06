@@ -20,6 +20,7 @@ public sealed class IndexModel : PageModel
     public List<TicketDto> Tickets { get; set; } = new();
     public List<CategoryDto> Categories { get; set; } = new();
     public bool CanCreate => _currentUser.User?.IsColaborador == true;
+    public string Kicker => _currentUser.User?.IsRrhh == true ? "Recursos Humanos" : "Colaborador";
 
     [BindProperty]
     public string Subject { get; set; } = string.Empty;

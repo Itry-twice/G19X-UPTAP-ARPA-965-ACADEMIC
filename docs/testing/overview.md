@@ -29,6 +29,18 @@ Cobertura (17 pruebas):
 
 ## Pruebas de integración (stack Docker)
 
+### Automatizadas
+
+Con el stack en ejecución (`docker compose up -d`):
+
+```bash
+python tests/e2e/integration_test.py
+```
+
+Valida (15 comprobaciones) a través del BFF: navegación por rol, restricción del onboarding al colaborador, creación de tickets, aislamiento RLS (un colaborador no ve tickets ajenos), respuesta del asistente con streaming y fuentes, y acceso al panel admin.
+
+### Manuales
+
 Levantar el stack y validar end-to-end:
 
 1. Login de cada rol → JWT válido.
