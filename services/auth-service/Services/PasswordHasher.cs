@@ -11,7 +11,7 @@ public sealed class PasswordHasher
     {
         var config = new Argon2Config
         {
-            Type = Argon2Type.DataIndependentAddressing, // Argon2id
+            Type = Argon2Type.HybridAddressing, // Argon2id
             Version = Argon2Version.Nineteen,
             TimeCost = 3,
             MemoryCost = 65536,

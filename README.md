@@ -152,7 +152,7 @@ Ver `.env.example`. Las principales:
 - Contraseñas con **Argon2id** (nunca en texto plano).
 - **JWT** firmado (HS256) + refresh tokens rotativos revocables.
 - Cookies **HttpOnly / Secure / SameSite** en el BFF.
-- **Rate limiting** y bloqueo por intentos fallidos con Redis.
+- **Rate limiting**: bloqueo por intentos fallidos con **Redis** (AuthService) y límite por usuario en memoria (AI Service).
 - **Row Level Security (RLS)** en PostgreSQL: cada servicio usa su propio rol de menor privilegio; el filtrado por propietario se aplica con `app.user_id`/`app.role`.
 - Prevención de **IDOR**, **mass assignment** (DTOs), **CSRF**, **XSS** y **SQLi**.
 - La API Key de Groq **solo reside en el AI Service**; nunca en el navegador ni en el código versionado.
@@ -186,7 +186,7 @@ Cobertura: Argon2id, JWT, autorización de HR (IDOR/roles), onboarding, ingesta/
 
 ```
 docs-source/            # Documentos de referencia (no modificar)
-docs/                   # Documentación técnica (arquitectura, API, seguridad, ADRs)
+docs/                   # Documentación técnica (PRD, MVP, arquitectura, API, seguridad, ADRs)
 infrastructure/
   postgres/init/        # Migraciones SQL (schema, RLS, seed)
   nginx/                # Reverse proxy
@@ -199,14 +199,22 @@ services/
   web/                  # Web/BFF (Razor Pages)
 tests/                  # Pruebas .NET
 knowledge-base/         # Pipeline de ingesta (fuente en ai-service)
+.github/workflows/      # CI/CD (GitHub Actions)
 docker-compose.yml
-.gitlab-ci.yml
 ```
 
 ---
 
 ## Documentación
 
+- `docs/PRD.md` — requerimientos y análisis
+- `docs/MVP.md` — alcance y estado del MVP
 - `docs/architecture/overview.md` — arquitectura y diagramas
 - `docs/decisions/` — ADRs (decisiones de arquitectura)
 - `docs/api/`, `docs/security/`, `docs/deployment/`, `docs/testing/`
+
+---
+
+## Uso de inteligencia artificial
+
+Parte del código y la documentación de este proyecto fue elaborada con asistencia de herramientas de inteligencia artificial (generación y revisión de código, documentación y configuración), siempre con revisión y validación manual del autor.

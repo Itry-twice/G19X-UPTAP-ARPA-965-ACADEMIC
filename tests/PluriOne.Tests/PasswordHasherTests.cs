@@ -37,6 +37,13 @@ public sealed class PasswordHasherTests
     }
 
     [Fact]
+    public void Hash_UsesArgon2id()
+    {
+        var hash = _hasher.Hash("PluriOne#2026");
+        Assert.StartsWith("$argon2id$", hash);
+    }
+
+    [Fact]
     public void RefreshToken_HashToken_IsDeterministic()
     {
         var a = PasswordHasher.HashToken("token-123");
