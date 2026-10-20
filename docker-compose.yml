@@ -54,6 +54,7 @@ services:
       Jwt__Audience: ${JWT_AUDIENCE:-plurione}
       Jwt__AccessMinutes: ${JWT_ACCESS_MINUTES:-30}
       Jwt__RefreshDays: ${JWT_REFRESH_DAYS:-7}
+      SeedDemo: ${SEED_DEMO:-false}
     depends_on:
       postgres:
         condition: service_healthy

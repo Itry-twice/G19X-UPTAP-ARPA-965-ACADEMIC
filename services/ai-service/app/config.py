@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    database_url: str = "postgresql://svc_ai:svc_ai_dev@localhost:5432/plurione"
+    database_url: str = ""
     groq_api_key: str = ""
     groq_model: str = "openai/gpt-oss-20b"
     groq_base_url: str = "https://api.groq.com/openai/v1"
@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     embedding_dim: int = 384
 
-    jwt_signing_key: str = "dev-only-signing-key-change-me-in-production-32bytes"
+    jwt_signing_key: str = ""
     jwt_issuer: str = "plurione-auth"
     jwt_audience: str = "plurione"
 

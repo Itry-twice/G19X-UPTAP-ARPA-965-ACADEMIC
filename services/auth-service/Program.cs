@@ -36,8 +36,12 @@ app.MapControllers();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy", service = "auth-service" }));
 
-using (var scope = app.Services.CreateScope())
+// Las cuentas DEMO solo se crean en desarrollo o si se habilita explícitamente
+// con SEED_DEMO=true (nunca en producción por defecto).
+if (app.Environment.IsDevelopment() ||
+    string.Equals(builder.Configuration["SeedDemo"], "true", StringComparison.OrdinalIgnoreCase))
 {
+    using var scope = app.Services.CreateScope();
     var seeder = scope.ServiceProvider.GetRequiredService<DemoSeeder>();
     await seeder.SeedAsync();
 }

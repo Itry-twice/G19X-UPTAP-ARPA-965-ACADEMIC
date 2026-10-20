@@ -53,6 +53,7 @@ cp .env.example .env
 Abre `.env` y completa al menos:
 - `GROQ_API_KEY` — tu clave de Groq (necesaria para que el asistente responda).
 - `POSTGRES_PASSWORD`, `REDIS_PASSWORD`, `SVC_*_PASSWORD`, `JWT_SIGNING_KEY` — cualquier valor seguro.
+- `SEED_DEMO=true` — para crear las cuentas de demostración (solo desarrollo/demos; en producción déjala en `false` o quítala).
 
 ### 3. Construir y levantar los servicios
 
@@ -60,7 +61,7 @@ Abre `.env` y completa al menos:
 docker compose up -d --build
 ```
 
-> La primera vez descarga las imágenes y el modelo de embeddings (puede tardar varios minutos).
+> La primera vez descarga las imágenes y el modelo de embeddings (puede tardar varios minutos; el Dockerfile del AI Service descarga `paraphrase-multilingual-MiniLM-L12-v2`).
 
 ### 4. Verificar
 
@@ -68,7 +69,7 @@ docker compose up -d --build
 docker compose ps
 ```
 
-Todos los servicios deben estar `Up` (`postgres` y `redis` en `healthy`). La aplicación queda en **http://localhost**.
+Los siete servicios deben quedar en **`healthy`**. La aplicación queda en **http://localhost**.
 
 ### 5. Ingerir la base de conocimiento (para que el asistente responda)
 
@@ -82,7 +83,7 @@ Alternativa: en el **Panel Admin**, botón "Re-ingestar documentos".
 
 Usa las **Credenciales DEMO** de la siguiente sección.
 
-> La primera vez, `infrastructure/postgres/init/` crea el esquema, los roles y las políticas **RLS**, y siembra los catálogos. Los usuarios DEMO se crean automáticamente por AuthService.
+> La primera vez, `infrastructure/postgres/init/` crea el esquema, los roles y las políticas **RLS**, y siembra los catálogos. Las cuentas DEMO solo se crean si `SEED_DEMO=true` (o en entorno de desarrollo).
 
 ---
 
@@ -112,6 +113,7 @@ Ver `.env.example`. Las principales:
 | `GROQ_MODEL` | Modelo LLM (por defecto `openai/gpt-oss-20b`) |
 | `EMBEDDING_PROVIDER` | `hash` (sin dependencias) o `sentence-transformers` |
 | `EMBEDDING_DIM` | Dimensión de los embeddings (384) |
+| `SEED_DEMO` | `true` para crear las cuentas de demostración (solo desarrollo/demos) |
 
 **Los secretos nunca se suben al repositorio** (`.env` está en `.gitignore`).
 
@@ -179,6 +181,8 @@ python tests/e2e/integration_test.py
 ```
 
 Cobertura: Argon2id, JWT, autorización de HR (IDOR/roles), onboarding, ingesta/RAG, rate limiting, y flujos críticos (login por rol, RLS, escalamiento, RAG). Ver `docs/testing/`.
+
+> Resultado verificado: 26 pruebas .NET, 17 de pytest y 15 del recorrido end-to-end, todas en verde (ver `docs/verification.md`).
 
 ---
 

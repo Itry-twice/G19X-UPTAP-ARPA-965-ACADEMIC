@@ -17,6 +17,8 @@ _pool: Optional[asyncpg.Pool] = None
 async def init_pool() -> asyncpg.Pool:
     global _pool
     settings = get_settings()
+    if not settings.database_url:
+        raise RuntimeError("DATABASE_URL no está configurada (variable de entorno requerida).")
     _pool = await asyncpg.create_pool(settings.database_url, min_size=1, max_size=10)
     async with _pool.acquire() as conn:
         await register_vector(conn)
