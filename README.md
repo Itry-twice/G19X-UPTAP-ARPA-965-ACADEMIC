@@ -61,7 +61,7 @@ Abre `.env` y completa al menos:
 docker compose up -d --build
 ```
 
-> La primera vez descarga las imágenes y el modelo de embeddings (puede tardar varios minutos; el Dockerfile del AI Service descarga `paraphrase-multilingual-MiniLM-L12-v2`).
+> La primera construcción tarda aproximadamente **10–15 minutos** (descarga las imágenes base y el modelo de embeddings `paraphrase-multilingual-MiniLM-L12-v2`, que se baja en el Dockerfile del AI Service). Las siguientes reconstrucciones son mucho más rápidas.
 
 ### 4. Verificar
 
@@ -69,7 +69,7 @@ docker compose up -d --build
 docker compose ps
 ```
 
-Los siete servicios deben quedar en **`healthy`**. La aplicación queda en **http://localhost**.
+Verificado: los servicios quedan en **`healthy`** (postgres, redis, auth, onboarding, hr, ai, web y nginx). La aplicación queda en **http://localhost**.
 
 ### 5. Ingerir la base de conocimiento (para que el asistente responda)
 
