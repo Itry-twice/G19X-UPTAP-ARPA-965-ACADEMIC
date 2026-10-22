@@ -102,7 +102,7 @@
                 foreach (var t in Model.EscalatedTickets)
                 {
                     <div class="ticket">
-                        <span class="badge @t.Status">@t.Status</span>
+                        <span class="badge @t.Status">@TicketStatus.Label(t.Status)</span>
                         <div style="flex:1">
                             <div class="subject">@t.Subject</div>
                             <div class="meta">Solicitado por <strong>@t.RequesterName</strong> · @(t.CategoryName ?? "Sin categoría") · @t.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</div>

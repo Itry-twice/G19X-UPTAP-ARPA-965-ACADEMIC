@@ -22,7 +22,7 @@
 <div class="grid grid-2">
     <div class="card">
         <div class="flex wrap" style="margin-bottom: 12px;">
-            <span class="badge @t.Status">@t.Status</span>
+            <span class="badge @t.Status">@TicketStatus.Label(t.Status)</span>
             <span class="badge">@t.Priority</span>
             @if (!string.IsNullOrEmpty(t.CategoryName))
             {
@@ -55,7 +55,7 @@
                         <select class="select" name="NewStatus">
                             @foreach (var s in new[] { "open", "in_progress", "resolved", "closed" })
                             {
-                                <option value="@s" selected="@(t.Status == s)">@s</option>
+                                <option value="@s" selected="@(t.Status == s)">@TicketStatus.Label(s)</option>
                             }
                         </select>
                         <button type="submit" class="btn btn-primary">Actualizar</button>
@@ -87,7 +87,7 @@
             <ul class="timeline">
                 @foreach (var h in t.History)
                 {
-                    <li>@(h.FromStatus ?? "—") → <strong>@h.ToStatus</strong>
+                    <li>@(h.FromStatus is null ? "—" : TicketStatus.Label(h.FromStatus)) → <strong>@TicketStatus.Label(h.ToStatus)</strong>
                         <span class="small muted">· @h.ChangedAt.ToLocalTime().ToString("dd/MM HH:mm")</span>
                     </li>
                 }

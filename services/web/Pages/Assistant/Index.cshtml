@@ -114,6 +114,10 @@
     } catch (err) {
       if (!tmp.textContent) tmp.textContent = 'Ocurrió un error al comunicarse con el asistente.';
     } finally {
+      // Re-renderiza el markdown (negritas) una vez terminado el streaming
+      if (tmp.textContent) {
+        content.replaceChild(renderContent(tmp.textContent), tmp);
+      }
       sendBtn.disabled = false;
       input.focus();
     }

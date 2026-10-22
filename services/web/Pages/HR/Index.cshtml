@@ -15,7 +15,7 @@
         <a class="btn btn-sm @(string.IsNullOrEmpty(Model.StatusFilter) ? "btn-primary" : "")" asp-page="/HR/Index">Todas</a>
         @foreach (var s in new[] { "open", "in_progress", "resolved", "closed" })
         {
-            <a class="btn btn-sm @(Model.StatusFilter == s ? "btn-primary" : "")" asp-page="/HR/Index" asp-route-statusFilter="@s">@s</a>
+            <a class="btn btn-sm @(Model.StatusFilter == s ? "btn-primary" : "")" asp-page="/HR/Index" asp-route-statusFilter="@s">@TicketStatus.Label(s)</a>
         }
     </div>
 </div>
@@ -52,7 +52,7 @@
                                 <select class="select" name="NewStatus" style="padding:4px 8px; font-size:0.85rem;">
                                     @foreach (var s in new[] { "open", "in_progress", "resolved", "closed" })
                                     {
-                                        <option value="@s" selected="@(t.Status == s)">@s</option>
+                                        <option value="@s" selected="@(t.Status == s)">@TicketStatus.Label(s)</option>
                                     }
                                 </select>
                                 <button type="submit" class="btn btn-sm">OK</button>

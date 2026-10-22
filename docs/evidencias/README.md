@@ -23,3 +23,20 @@ docker compose up -d --build
 docker exec -it plurione-ai-service python ingest_cli.py
 python tests/e2e/integration_test.py
 ```
+
+## Capturas del recorrido
+
+1. **Login** — inicio de sesión.
+   ![Login](captura-login.png)
+
+2. **Chat con el asistente (RAG)** — respuesta con fuentes citadas.
+   ![Chat con el asistente](chat-asistente.png)
+
+3. **Ticket creado desde el chat** — *function calling* (`create_hr_ticket`).
+   ![Chat que crea un ticket](chat-crea-ticket.png)
+
+4. **Checklist 30-60-90** — onboarding y plan de integración.
+   ![Checklist 30-60-90](checklist-30-60-90.png)
+
+5. **Panel de Recursos Humanos** — lista de solicitudes.
+   ![Panel de RRHH](panel-rrhh.png)
