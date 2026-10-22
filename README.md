@@ -1,5 +1,7 @@
 # PluriOne — Asistente Virtual para la Integración Organizacional
 
+![CI](https://github.com/Itry-twice/G19X-UPTAP-ARPA-965-ACADEMIC/actions/workflows/ci.yml/badge.svg)
+
 Plataforma web de **onboarding** organizacional con un **asistente virtual basado en IA (RAG)** para acompañar a los nuevos colaboradores de **PluriOne S.A. de C.V. (Develop Talent & Technology)**.
 
 El sistema resuelve dudas en lenguaje natural, guía las actividades de incorporación, muestra el plan **30-60-90**, y canaliza solicitudes al área de **Recursos Humanos** mediante tickets.

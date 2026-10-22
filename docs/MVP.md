@@ -160,13 +160,15 @@ docker exec -it plurione-ai-service python ingest_cli.py
 |---|---|
 | 8 fases de desarrollo | ✅ Completadas |
 | Funcionalidades post-MVP (roles, panel admin, KB, modo oscuro) | ✅ Completadas |
-| Pruebas unitarias (.NET) | ✅ 25/25 en verde |
+| Pruebas unitarias (.NET) | ✅ 26/26 en verde |
 | Suite pytest del AI Service | ✅ 17/17 en verde |
 | Pruebas de integración end-to-end (login, onboarding, tickets, RAG, RLS) | ✅ 15/15 en verde |
 | Repositorio Git + primer commit | ✅ Completado |
 | Cierre formal del MVP | ✅ Completado |
 
 **MVP cerrado.** El producto está funcional, integrado, probado y documentado.
+
+Evidencia del recorrido end-to-end en [`docs/evidencias/`](evidencias/).
 
 ---
 
