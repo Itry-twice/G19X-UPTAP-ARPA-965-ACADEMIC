@@ -47,7 +47,7 @@ services:
     environment: &svc_env
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__PluriOne: Host=postgres;Port=5432;Database=${POSTGRES_DB:-plurione};Username=svc_auth;Password=${SVC_AUTH_PASSWORD};Include Error Detail=true
+      ConnectionStrings__PluriOne: Host=postgres;Port=5432;Database=${POSTGRES_DB:-plurione};Username=svc_auth;Password=${SVC_AUTH_PASSWORD};Include Error Detail=${DB_ERROR_DETAIL:-false}
       Redis__ConnectionString: redis:6379,password=${REDIS_PASSWORD},abortConnect=false
       Jwt__SigningKey: ${JWT_SIGNING_KEY:?JWT_SIGNING_KEY required}
       Jwt__Issuer: ${JWT_ISSUER:-plurione-auth}
@@ -77,7 +77,7 @@ services:
     container_name: plurione-onboarding-service
     environment:
       <<: *svc_env
-      ConnectionStrings__PluriOne: Host=postgres;Port=5432;Database=${POSTGRES_DB:-plurione};Username=svc_onboarding;Password=${SVC_ONBOARDING_PASSWORD};Include Error Detail=true
+      ConnectionStrings__PluriOne: Host=postgres;Port=5432;Database=${POSTGRES_DB:-plurione};Username=svc_onboarding;Password=${SVC_ONBOARDING_PASSWORD};Include Error Detail=${DB_ERROR_DETAIL:-false}
     depends_on:
       postgres:
         condition: service_healthy
@@ -98,7 +98,7 @@ services:
     container_name: plurione-hr-service
     environment:
       <<: *svc_env
-      ConnectionStrings__PluriOne: Host=postgres;Port=5432;Database=${POSTGRES_DB:-plurione};Username=svc_hr;Password=${SVC_HR_PASSWORD};Include Error Detail=true
+      ConnectionStrings__PluriOne: Host=postgres;Port=5432;Database=${POSTGRES_DB:-plurione};Username=svc_hr;Password=${SVC_HR_PASSWORD};Include Error Detail=${DB_ERROR_DETAIL:-false}
     depends_on:
       postgres:
         condition: service_healthy

@@ -34,7 +34,7 @@
                                 <select class="select" name="NewRole" style="padding:4px 8px; font-size:0.85rem;">
                                     @foreach (var r in new[] { "colaborador", "rrhh", "admin" })
                                     {
-                                        <option value="@r" selected="@(u.Role == r)">@r</option>
+                                        <option value="@r" selected="@(u.Role == r)">@UserRole.Label(r)</option>
                                     }
                                 </select>
                                 <button type="submit" class="btn btn-sm">OK</button>

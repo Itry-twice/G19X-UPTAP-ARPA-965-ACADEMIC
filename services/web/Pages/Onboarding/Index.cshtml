@@ -35,7 +35,7 @@
                 }
                 <div class="meta">@(t.Category ?? "general")@(t.IsRequired ? " · obligatoria" : "")</div>
             </div>
-            <span class="badge @t.Status">@t.Status</span>
+            <span class="badge @t.Status">@TaskItemStatus.Label(t.Status)</span>
         </div>
     }
 </div>

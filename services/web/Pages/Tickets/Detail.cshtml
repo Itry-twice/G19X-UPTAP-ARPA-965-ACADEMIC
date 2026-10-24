@@ -23,7 +23,7 @@
     <div class="card">
         <div class="flex wrap" style="margin-bottom: 12px;">
             <span class="badge @t.Status">@TicketStatus.Label(t.Status)</span>
-            <span class="badge">@t.Priority</span>
+            <span class="badge">@TicketPriority.Label(t.Priority)</span>
             @if (!string.IsNullOrEmpty(t.CategoryName))
             {
                 <span class="badge">@t.CategoryName</span>

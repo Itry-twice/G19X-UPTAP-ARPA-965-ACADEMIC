@@ -26,12 +26,12 @@
             <span class="avatar" style="width:52px;height:52px;font-size:1.3rem;">@(u?.FullName.FirstOrDefault())</span>
             <div>
                 <h3 style="margin:0;">@u?.FullName</h3>
-                <span class="badge role-@u?.Role">@u?.Role</span>
+                <span class="badge role-@u?.Role">@UserRole.Label(u?.Role)</span>
             </div>
         </div>
         <table class="table">
             <tr><th>Correo</th><td>@u?.Email</td></tr>
-            <tr><th>Rol</th><td>@u?.Role</td></tr>
+            <tr><th>Rol</th><td>@UserRole.Label(u?.Role)</td></tr>
         </table>
     </div>
 

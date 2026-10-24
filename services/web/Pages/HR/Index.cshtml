@@ -46,7 +46,7 @@
                         <td>@t.Subject</td>
                         <td>@t.RequesterName</td>
                         <td>@(t.CategoryName ?? "—")</td>
-                        <td>@t.Priority</td>
+                        <td>@TicketPriority.Label(t.Priority)</td>
                         <td>
                             <form method="post" asp-page-handler="Status" asp-route-id="@t.Id" class="flex" style="gap:6px;">
                                 <select class="select" name="NewStatus" style="padding:4px 8px; font-size:0.85rem;">
