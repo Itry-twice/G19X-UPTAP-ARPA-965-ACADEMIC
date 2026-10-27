@@ -1,14 +1,14 @@
-=== 1. Autenticación y navegación por rol ===
+﻿=== 1. Autenticaci≤n y navegaci≤n por rol ===
   [OK] colaborador entra (dashboard con 'Onboarding')
   [OK] rrhh ve 'Panel RRHH'
   [OK] rrhh NO ve 'Onboarding'
   [OK] admin ve 'Panel Admin'
   [OK] admin NO ve 'Panel RRHH'
-=== 2. Restricción de onboarding (solo colaborador) ===
+=== 2. Restricci≤n de onboarding (solo colaborador) ===
   [OK] colaborador accede a /Onboarding (200)
   [OK] rrhh NO accede a /Onboarding (403)
   [OK] admin NO accede a /Onboarding (403)
-=== 3. Tickets: creación, escalamiento y RLS ===
+=== 3. Tickets: creaci≤n, escalamiento y RLS ===
   [OK] rrhh ve el ticket creado
   [OK] colaborador 2 NO ve el ticket ajeno (RLS)
 === 4. Asistente (RAG) ===

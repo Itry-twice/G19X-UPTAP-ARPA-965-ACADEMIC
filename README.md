@@ -116,6 +116,7 @@ Ver `.env.example`. Las principales:
 | `EMBEDDING_PROVIDER` | `hash` (sin dependencias) o `sentence-transformers` |
 | `EMBEDDING_DIM` | Dimensión de los embeddings (384) |
 | `SEED_DEMO` | `true` para crear las cuentas de demostración (solo desarrollo/demos) |
+| `DB_ERROR_DETAIL` | `true` muestra detalles de error de la BD (desarrollo); `false` los oculta (producción, valor por omisión) |
 
 **Los secretos nunca se suben al repositorio** (`.env` está en `.gitignore`).
 
@@ -170,7 +171,7 @@ Ver `docs/security/`.
 ## Pruebas
 
 ```bash
-# Pruebas unitarias .NET (25)
+# Pruebas unitarias .NET (47)
 dotnet test tests/PluriOne.Tests/PluriOne.Tests.csproj
 
 # Pruebas unitarias del AI Service (17)
@@ -182,9 +183,9 @@ python -m pytest tests -v
 python tests/e2e/integration_test.py
 ```
 
-Cobertura: Argon2id, JWT, autorización de HR (IDOR/roles), onboarding, ingesta/RAG, rate limiting, y flujos críticos (login por rol, RLS, escalamiento, RAG). Ver `docs/testing/`.
+Cobertura: Argon2id, JWT, autorización de HR (IDOR/roles), onboarding, ingesta/RAG, rate limiting, traducción de etiquetas (helpers web) y flujos críticos (login por rol, RLS, escalamiento, RAG). Ver `docs/testing/`.
 
-> Resultado verificado: 26 pruebas .NET, 17 de pytest y 15 del recorrido end-to-end, todas en verde (ver `docs/verification.md`).
+> Resultado verificado: 47 pruebas .NET, 17 de pytest y 15 del recorrido end-to-end, todas en verde (ver `docs/verification.md`).
 
 ---
 

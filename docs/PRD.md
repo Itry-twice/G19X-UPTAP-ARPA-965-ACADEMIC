@@ -361,7 +361,7 @@ Ver `docs/architecture/`.
 | FASE 8 | QA y seguridad | ✅ Completado |
 | Post-MVP | Separación de roles + panel admin (usuarios, auditoría, KB) | ✅ Completado |
 | Post-MVP | Subida/listado/eliminación de documentos, reset de contraseña, modo oscuro, zona horaria MX | ✅ Completado |
-| Post-MVP | Pruebas unitarias .NET (25) + pytest AI Service (17) + integración end-to-end (15) | ✅ Completado |
+| Post-MVP | Pruebas unitarias .NET (47) + pytest AI Service (17) + integración end-to-end (15) | ✅ Completado |
 | Post-MVP | Repositorio Git + primer commit | ✅ Completado |
 | Post-MVP | Cierre formal del MVP | ✅ Completado |
 

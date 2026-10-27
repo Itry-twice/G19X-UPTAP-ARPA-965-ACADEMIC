@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\services\auth-service\PluriOne.AuthService.csproj" />
     <ProjectReference Include="..\..\services\hr-service\PluriOne.HrService.csproj" />
     <ProjectReference Include="..\..\services\onboarding-service\PluriOne.OnboardingService.csproj" />
+    <ProjectReference Include="..\..\services\web\PluriOne.Web.csproj" />
   </ItemGroup>
 
 </Project>

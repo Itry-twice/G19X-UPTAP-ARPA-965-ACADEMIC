@@ -1,0 +1,6 @@
+# Fuerza saltos de línea LF en scripts y archivos sensibles,
+# independientemente de core.autocrlf del usuario.
+*.sh text eol=lf
+*.sql text eol=lf
+Dockerfile text eol=lf
+*.conf text eol=lf

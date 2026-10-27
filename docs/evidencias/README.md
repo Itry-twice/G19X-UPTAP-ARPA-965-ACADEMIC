@@ -4,6 +4,8 @@ Esta carpeta contiene evidencia de que el sistema funciona de punta a punta.
 
 ## Recorrido end-to-end (automatizado)
 
+Última corrida: 26-oct-2026, commit `887f606`.
+
 `integration_test_output.txt` — salida de `tests/e2e/integration_test.py`, ejecutado con el stack en Docker.
 
 **Resultado: 15 comprobaciones correctas, 0 fallidas.**
@@ -15,6 +17,10 @@ El recorrido valida:
 3. Tickets: creación, aislamiento por propietario (RLS) y visibilidad para RRHH.
 4. Asistente (RAG): respuesta con streaming, fuentes citadas y término correcto.
 5. Panel admin: lista de usuarios y acceso restringido (403 para RRHH).
+
+## Instalación en carpeta limpia
+
+Ver [`instalacion-limpia.md`](instalacion-limpia.md): bitácora de la instalación desde cero siguiendo el `README.md` (26-oct-2026, commit `887f606`).
 
 ## Cómo reproducirlo
 
@@ -40,3 +46,12 @@ python tests/e2e/integration_test.py
 
 5. **Panel de Recursos Humanos** — lista de solicitudes.
    ![Panel de RRHH](panel-rrhh.png)
+
+6. **Negritas en la respuesta del asistente** — el texto se pinta al terminar el streaming.
+   ![Chat con negritas](chat-negritas.png)
+
+7. **Checklist con estados en español** — Pendiente, En proceso, Completada.
+   ![Checklist en español](checklist-estados-es.png)
+
+8. **Perfil con el rol en español** — Colaborador / Recursos Humanos / Administrador.
+   ![Perfil con rol en español](perfil-rol-es.png)
