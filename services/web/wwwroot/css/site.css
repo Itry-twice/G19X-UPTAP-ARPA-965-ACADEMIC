@@ -213,6 +213,11 @@ main { padding: 32px 0 64px; }
 .msg .content p { margin: 0 0 0.5em; }
 .msg .content p:last-child { margin: 0; }
 .sources { font-size: 0.8rem; color: var(--muted); margin-top: 8px; }
+.msg .content .chat-table { width: 100%; border-collapse: collapse; margin: 0.5em 0; font-size: 0.9rem; }
+.msg .content .chat-table th, .msg .content .chat-table td { text-align: left; padding: 6px 8px; border: 1px solid var(--line); }
+.msg .content .chat-table th { background: var(--primary-soft); font-weight: 700; }
+.msg .content blockquote.chat-quote { margin: 0.5em 0; padding: 6px 10px; border-left: 3px solid var(--ink); opacity: 0.85; }
+.msg .content ul.chat-list { margin: 0.5em 0; padding-left: 1.25em; }
 
 /* Table */
 .table { width: 100%; border-collapse: collapse; }

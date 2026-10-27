@@ -23,7 +23,7 @@ async def main(docs_dir: str) -> None:
     await init_pool()
     embedder = get_embedding_provider()
     logger.info("Usando proveedor de embeddings: %s (dim=%s)", type(embedder).__name__, embedder.dimension)
-    result = await ingest(docs_dir, embedder)
+    result = await ingest([docs_dir], embedder)
     logger.info("Ingesta completada: %s", result)
     if _pool is not None:
         await _pool.close()
