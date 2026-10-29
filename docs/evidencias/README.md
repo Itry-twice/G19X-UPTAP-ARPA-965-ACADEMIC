@@ -4,7 +4,7 @@ Esta carpeta contiene evidencia de que el sistema funciona de punta a punta.
 
 ## Recorrido end-to-end (automatizado)
 
-Última corrida: 26-oct-2026 19:29, commit `ede6ac9b`.
+Última corrida: 29-oct-2026, commit `2de1a51`.
 
 `integration_test_output.txt` — salida de `tests/e2e/integration_test.py`, ejecutado con el stack en Docker.
 
@@ -55,3 +55,12 @@ python tests/e2e/integration_test.py
 
 8. **Perfil con el rol en español** — Colaborador / Recursos Humanos / Administrador.
    ![Perfil con rol en español](perfil-rol-es.png)
+
+9. **Onboarding con estados de tareas** — tareas en «Pendiente» y «Completada».
+   ![Onboarding con tareas](onboarding-tareas-estados.png)
+
+10. **Ticket «Cerrada» en tema oscuro** — la etiqueta se lee sobre el fondo oscuro.
+    ![Cerrada en tema oscuro](tickets-cerrada-oscuro.png)
+
+11. **Chat con tabla de comparación** — el asistente responde con una tabla renderizada.
+    ![Chat con tabla](chat-tabla-comparacion.png)

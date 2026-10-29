@@ -17,6 +17,7 @@
   --warning-soft: #fff3dc;
   --danger: #c62828;
   --danger-soft: #fdeaea;
+  --neutral-soft: #ececec;
   --muted: #71716a;
   --line: #151512;
   --nav-bg: #151512;
@@ -42,6 +43,7 @@
   --warning-soft: #33291a;
   --danger: #ff6b6b;
   --danger-soft: #331d1d;
+  --neutral-soft: #2a2a34;
   --muted: #9b9ba5;
   --line: #f4f4f1;
   --nav-bg: #15151d;
@@ -162,7 +164,7 @@ main { padding: 32px 0 64px; }
 .badge.open { background: var(--accent-soft); }
 .badge.in_progress { background: var(--warning-soft); }
 .badge.resolved { background: var(--success-soft); }
-.badge.closed { background: #ececec; }
+.badge.closed { background: var(--neutral-soft); }
 .badge.completed { background: var(--success-soft); }
 .badge.pending { background: var(--warning-soft); }
 .badge.role-rrhh { background: var(--accent-soft); }

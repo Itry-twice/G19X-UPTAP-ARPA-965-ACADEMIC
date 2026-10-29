@@ -66,7 +66,7 @@ python tests/e2e/integration_test.py
 
 ## 6. Integración continua
 
-Última corrida en verde: 26-oct-2026 19:29, commit `ede6ac9b`.
+Última corrida en verde: 29-oct-2026, commit `2de1a51`.
 
 - Build y tests (.NET): 47 pruebas, correctas
 - Tests (AI Service): 17 pruebas, correctas

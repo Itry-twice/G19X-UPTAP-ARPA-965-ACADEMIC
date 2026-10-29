@@ -11,7 +11,7 @@ import asyncio
 import logging
 
 from app.config import get_settings
-from app.db import init_pool, _pool
+from app.db import init_pool
 from app.embeddings.sentence_provider import get_embedding_provider
 from app.rag.ingest import ingest
 
@@ -20,13 +20,14 @@ logger = logging.getLogger(__name__)
 
 
 async def main(docs_dir: str) -> None:
-    await init_pool()
-    embedder = get_embedding_provider()
-    logger.info("Usando proveedor de embeddings: %s (dim=%s)", type(embedder).__name__, embedder.dimension)
-    result = await ingest([docs_dir], embedder)
-    logger.info("Ingesta completada: %s", result)
-    if _pool is not None:
-        await _pool.close()
+    pool = await init_pool()
+    try:
+        embedder = get_embedding_provider()
+        logger.info("Usando proveedor de embeddings: %s (dim=%s)", type(embedder).__name__, embedder.dimension)
+        result = await ingest([docs_dir], embedder)
+        logger.info("Ingesta completada: %s", result)
+    finally:
+        await pool.close()
 
 
 if __name__ == "__main__":

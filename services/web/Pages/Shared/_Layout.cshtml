@@ -5,7 +5,9 @@
     var isRrhh = user?.IsRrhh == true;
     var isAdmin = user?.IsAdmin == true;
     var path = Context.Request.Path.Value ?? "";
-    string Active(string target) => path.StartsWith(target, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+    string Active(string target) => target == "/"
+        ? (path == "/" || path.Equals("/Index", StringComparison.OrdinalIgnoreCase) ? "active" : "")
+        : (path.StartsWith(target, StringComparison.OrdinalIgnoreCase) ? "active" : "");
 }
 <!DOCTYPE html>
 <html lang="es">
