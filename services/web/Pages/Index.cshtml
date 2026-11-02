@@ -78,7 +78,7 @@
                     <span class="badge @t.Status">@TicketStatus.Label(t.Status)</span>
                     <div style="flex:1">
                         <div class="subject">@t.Subject</div>
-                        <div class="meta">Solicitado por <strong>@t.RequesterName</strong> · @t.CategoryName · @t.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</div>
+                        <div class="meta">Solicitado por <strong>@t.RequesterName</strong> · @t.CategoryName · @ZonaEmpresa.Local(t.CreatedAt).ToString("dd/MM/yyyy")</div>
                     </div>
                     <a class="btn btn-sm" asp-page="/Tickets/Detail" asp-route-id="@t.Id">Abrir</a>
                 </div>

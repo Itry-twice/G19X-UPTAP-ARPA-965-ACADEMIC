@@ -42,7 +42,9 @@
   }
 
   function inlineMd(text) {
-    return escapeHtml(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    return escapeHtml(text)
+      .replace(/&lt;br\s*\/?&gt;/gi, '<br>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   }
 
   function parseRow(line) {

@@ -112,6 +112,8 @@ h3 { font-size: 1.1rem; }
 }
 .theme-toggle:hover { background: rgba(255,255,255,0.1); }
 
+.navbar .btn-ghost { color: var(--nav-fg); border-color: var(--nav-fg); box-shadow: none; }
+
 main { padding: 32px 0 64px; }
 
 .page-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }

@@ -105,7 +105,7 @@
                         <span class="badge @t.Status">@TicketStatus.Label(t.Status)</span>
                         <div style="flex:1">
                             <div class="subject">@t.Subject</div>
-                            <div class="meta">Solicitado por <strong>@t.RequesterName</strong> · @(t.CategoryName ?? "Sin categoría") · @t.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</div>
+                            <div class="meta">Solicitado por <strong>@t.RequesterName</strong> · @(t.CategoryName ?? "Sin categoría") · @ZonaEmpresa.Local(t.CreatedAt).ToString("dd/MM/yyyy")</div>
                         </div>
                         <a class="btn btn-sm" asp-page="/Tickets/Detail" asp-route-id="@t.Id">Abrir</a>
                         @if (t.Status is "resolved" or "closed")
@@ -216,7 +216,7 @@
                             @foreach (var e in Model.DayEvents)
                             {
                                 <tr>
-                                    <td class="small muted">@e.CreatedAt.ToLocalTime().ToString("HH:mm")</td>
+                                    <td class="small muted">@ZonaEmpresa.Local(e.CreatedAt).ToString("HH:mm")</td>
                                     <td>@(string.IsNullOrEmpty(e.UserName) ? "—" : e.UserName)</td>
                                     <td>@PluriOne.Web.Pages.Admin.IndexModel.FriendlyAction(e.Action)</td>
                                 </tr>

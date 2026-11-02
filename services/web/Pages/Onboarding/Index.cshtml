@@ -21,20 +21,25 @@
 </div>
 
 <div class="card">
+    <div id="task-error" class="alert alert-error" style="display:none;"></div>
     @foreach (var t in Model.Tasks)
     {
         var isDone = t.Status == "completed";
         <div class="task @(isDone ? "done" : "")" data-task-id="@t.TaskId">
             <div class="check" role="button" tabindex="0" aria-label="Marcar tarea"
-                 data-status="@(isDone ? "completed" : "pending")">@(isDone ? "✓" : "")</div>
+                 data-status="@t.Status">@(isDone ? "✓" : "")</div>
             <div class="body">
                 <div class="title">@t.Title</div>
                 @if (!string.IsNullOrEmpty(t.Description))
                 {
                     <div class="meta">@t.Description</div>
                 }
-                <div class="meta">@(t.Category ?? "general")@(t.IsRequired ? " · obligatoria" : "")</div>
+                <div class="meta">@TaskCategory.Label(t.Category ?? "general")@(t.IsRequired ? " · obligatoria" : "")</div>
             </div>
+            @if (t.Status == "pending")
+            {
+                <button type="button" class="btn btn-sm task-start">Empezar</button>
+            }
             <span class="badge @t.Status">@TaskItemStatus.Label(t.Status)</span>
         </div>
     }
@@ -43,20 +48,51 @@
 @section Scripts {
 <script>
 (function () {
+  function setStatus(id, status) {
+    return apiFetch('/api/onboarding/tasks/' + id + '/status', {
+      method: 'POST',
+      headers: csrfHeaders(),
+      body: JSON.stringify({ status: status })
+    });
+  }
+
+  function showError(message) {
+    const box = document.getElementById('task-error');
+    if (box) {
+      box.textContent = message;
+      box.style.display = 'block';
+    }
+  }
+
   document.querySelectorAll('.task .check').forEach(function (check) {
-    check.addEventListener('click', async function () {
+    function toggle() {
       const task = check.closest('.task');
       const id = task.getAttribute('data-task-id');
       const currentlyDone = check.getAttribute('data-status') === 'completed';
       const nextStatus = currentlyDone ? 'pending' : 'completed';
-      try {
-        const resp = await apiFetch('/api/onboarding/tasks/' + id + '/status', {
-          method: 'POST',
-          headers: csrfHeaders(),
-          body: JSON.stringify({ status: nextStatus })
-        });
+      setStatus(id, nextStatus).then(function (resp) {
         if (resp.ok) { window.location.reload(); }
-      } catch (e) { /* ignore */ }
+        else { showError('No se pudo guardar el estado de la tarea.'); }
+      }).catch(function () {
+        showError('Error de conexión al guardar la tarea.');
+      });
+    }
+    check.addEventListener('click', toggle);
+    check.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  });
+
+  document.querySelectorAll('.task-start').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const task = btn.closest('.task');
+      const id = task.getAttribute('data-task-id');
+      setStatus(id, 'in_progress').then(function (resp) {
+        if (resp.ok) { window.location.reload(); }
+        else { showError('No se pudo guardar el estado de la tarea.'); }
+      }).catch(function () {
+        showError('Error de conexión al guardar la tarea.');
+      });
     });
   });
 })();

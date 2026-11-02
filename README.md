@@ -87,6 +87,24 @@ Usa las **Credenciales DEMO** de la siguiente sección.
 
 > La primera vez, `infrastructure/postgres/init/` crea el esquema, los roles y las políticas **RLS**, y siembra los catálogos. Las cuentas DEMO solo se crean si `SEED_DEMO=true` (o en entorno de desarrollo).
 
+### 7. Sin Docker (desarrollo)
+
+Requisitos previos: **PostgreSQL 16 con la extensión `pgvector`**, **Redis** en ejecución, **.NET 9 SDK** y **Python 3.12**.
+
+1. Copia `.env.example` a `.env`, define los secretos y deja `SEED_DEMO=true` para las cuentas DEMO.
+2. Crea el esquema ejecutando, en orden, `infrastructure/postgres/init/000_roles.sh`, `001_schema.sql` y `002_seed.sql` contra tu PostgreSQL (ajusta el `Host` de las cadenas de conexión a `localhost`).
+3. Levanta cada servicio en su puerto (el Web/BFF espera los puertos 8001–8004):
+
+| Servicio | Comando | Puerto |
+|---|---|---|
+| AuthService | `ASPNETCORE_URLS=http://localhost:8001 dotnet run --project services/auth-service` | 8001 |
+| OnboardingService | `ASPNETCORE_URLS=http://localhost:8002 dotnet run --project services/onboarding-service` | 8002 |
+| HrService | `ASPNETCORE_URLS=http://localhost:8003 dotnet run --project services/hr-service` | 8003 |
+| AI Service | `cd services/ai-service && uvicorn app.main:app --host 0.0.0.0 --port 8004` | 8004 |
+| Web (BFF) | `ASPNETCORE_URLS=http://localhost:5000 dotnet run --project services/web` | 5000 |
+
+> El AI Service lee su configuración de `.env` (`DATABASE_URL`, `GROQ_API_KEY`, `GROQ_MODEL`, `EMBEDDING_PROVIDER`, etc.). Los servicios .NET leen las variables de entorno (`ConnectionStrings__PluriOne`, `Redis__ConnectionString`, `Jwt__SigningKey`, `SeedDemo`). **PostgreSQL con `pgvector` y Redis son obligatorios**; auth-service no arranca sin Redis.
+
 ---
 
 ## Credenciales DEMO
@@ -171,7 +189,7 @@ Ver `docs/security/`.
 ## Pruebas
 
 ```bash
-# Pruebas unitarias .NET (47)
+# Pruebas unitarias .NET (58)
 dotnet test tests/PluriOne.Tests/PluriOne.Tests.csproj
 
 # Pruebas unitarias del AI Service (17)
@@ -181,11 +199,14 @@ python -m pytest tests -v
 
 # Pruebas de integración end-to-end (requiere el stack en ejecución)
 python tests/e2e/integration_test.py
+
+# Contra otra dirección (por ejemplo, sin Docker):
+#   E2E_BASE_URL=http://localhost:5000 python tests/e2e/integration_test.py
 ```
 
 Cobertura: Argon2id, JWT, autorización de HR (IDOR/roles), onboarding, ingesta/RAG, rate limiting, traducción de etiquetas (helpers web) y flujos críticos (login por rol, RLS, escalamiento, RAG). Ver `docs/testing/`.
 
-> Resultado verificado: 47 pruebas .NET, 17 de pytest y 15 del recorrido end-to-end, todas en verde (ver `docs/verification.md`).
+> Resultado verificado: 58 pruebas .NET, 17 de pytest y 15 del recorrido end-to-end, todas en verde (ver `docs/verification.md`).
 
 ---
 

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PluriOne.Shared;
 using PluriOne.Shared.Auth;
 using PluriOne.Web.Contracts;
 using PluriOne.Web.Services;
@@ -41,7 +42,7 @@ public sealed class IndexModel : PageModel
         IsRrhh = user?.IsRrhh == true;
         IsAdmin = user?.IsAdmin == true;
 
-        var hour = DateTime.Now.Hour;
+        var hour = ZonaEmpresa.Ahora().Hour;
         Greeting = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches";
 
         if (IsColaborador)

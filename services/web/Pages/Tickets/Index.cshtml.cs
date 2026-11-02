@@ -21,6 +21,7 @@ public sealed class IndexModel : PageModel
     public List<CategoryDto> Categories { get; set; } = new();
     public bool CanCreate => _currentUser.User?.IsColaborador == true;
     public string Kicker => _currentUser.User?.IsRrhh == true ? "Recursos Humanos" : "Colaborador";
+    public string Titulo => _currentUser.User?.IsRrhh == true ? "Solicitudes" : "Mis solicitudes";
 
     [BindProperty]
     public string Subject { get; set; } = string.Empty;

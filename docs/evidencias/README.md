@@ -4,7 +4,7 @@ Esta carpeta contiene evidencia de que el sistema funciona de punta a punta.
 
 ## Recorrido end-to-end (automatizado)
 
-Última corrida: 29-oct-2026, commit `4dafb96`.
+Última corrida: 02-nov-2026, commit `COMMIT_HASH`.
 
 `integration_test_output.txt` — salida de `tests/e2e/integration_test.py`, ejecutado con el stack en Docker.
 
@@ -50,8 +50,8 @@ python tests/e2e/integration_test.py
 6. **Negritas en la respuesta del asistente** — el texto se pinta al terminar el streaming.
    ![Chat con negritas](chat-negritas.png)
 
-7. **Checklist con estados en español** — Pendiente, En proceso, Completada.
-   ![Checklist en español](checklist-estados-es.png)
+7. **Tickets con estados en español** — Abierta, En proceso, Resuelta, Cerrada.
+   ![Tickets en español](tickets-estados-es.png)
 
 8. **Perfil con el rol en español** — Colaborador / Recursos Humanos / Administrador.
    ![Perfil con rol en español](perfil-rol-es.png)

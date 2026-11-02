@@ -49,8 +49,7 @@
                         <td>@TicketPriority.Label(t.Priority)</td>
                         <td>
                             <form method="post" asp-page-handler="Status" asp-route-id="@t.Id" class="flex" style="gap:6px;">
-                                <select class="select" name="NewStatus" style="padding:4px 8px; font-size:0.85rem;">
-                                    @foreach (var s in new[] { "open", "in_progress", "resolved", "closed" })
+                                <select class="select" name="NewStatus" style="padding:4px 8px; font-size:0.85rem; min-width:9rem;">@foreach (var s in new[] { "open", "in_progress", "resolved", "closed" })
                                     {
                                         <option value="@s" selected="@(t.Status == s)">@TicketStatus.Label(s)</option>
                                     }
@@ -58,7 +57,7 @@
                                 <button type="submit" class="btn btn-sm">OK</button>
                             </form>
                         </td>
-                        <td>@t.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                        <td>@ZonaEmpresa.Local(t.CreatedAt).ToString("dd/MM/yyyy")</td>
                         <td class="flex" style="gap:6px;">
                             <a class="btn btn-sm" asp-page="/Tickets/Detail" asp-route-id="@t.Id">Abrir</a>
                             @if (t.Status is "resolved" or "closed")

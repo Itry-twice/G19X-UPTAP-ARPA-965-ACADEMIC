@@ -6,13 +6,14 @@
 dotnet test tests/PluriOne.Tests/PluriOne.Tests.csproj
 ```
 
-Cobertura (47 pruebas):
+Cobertura (58 pruebas):
 
 - `PasswordHasherTests` — Argon2id (hash/verify, salting, sin texto plano).
 - `JwtTokenServiceTests` — claims, issuer/audiencia, validación.
 - `HrManagerTests` — creación de ticket (requester = usuario), rechazo de prioridad inválida, aislamiento por propietario (IDOR), listado para RRHH, prohibición de cambio de estado para colaborador, historial, comentarios, escalamiento (solo RRHH) y eliminación (solo resueltas/cerradas, por RRHH/admin).
 - `OnboardingManagerTests` — asignación de tareas, idempotencia, validación de estado, progreso.
-- `HelpersTests` — traducción de etiquetas (`TaskItemStatus`, `TicketPriority`, `UserRole` y `TicketStatus`): valores conocidos, desconocidos (se devuelven tal cual) y `null` (cadena vacía).
+- `HelpersTests` — traducción de etiquetas (`TaskItemStatus`, `TicketPriority`, `UserRole`, `TicketStatus`, `TicketSource` y `TaskCategory`): valores conocidos, desconocidos (se devuelven tal cual) y `null` (cadena vacía).
+- `ZonaEmpresaTests` — conversión de una fecha UTC a la zona horaria de la empresa (America/Mexico_City).
 
 ## Pruebas unitarias (AI Service — pytest)
 

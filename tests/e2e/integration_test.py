@@ -4,13 +4,14 @@ Valida los flujos críticos y los controles de seguridad/roles a través del BFF
 Requisitos: `docker compose up -d` y la base de conocimiento ya ingerida.
 Uso: python tests/e2e/integration_test.py
 """
+import os
 import re
 import sys
 import time
 
 import requests
 
-BASE = "http://localhost"
+BASE = os.environ.get("E2E_BASE_URL", "http://localhost")
 PASSWORD = "PluriOne#2026"
 
 PASS = 0

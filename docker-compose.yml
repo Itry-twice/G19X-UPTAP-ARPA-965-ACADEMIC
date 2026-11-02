@@ -55,6 +55,8 @@ services:
       Jwt__AccessMinutes: ${JWT_ACCESS_MINUTES:-30}
       Jwt__RefreshDays: ${JWT_REFRESH_DAYS:-7}
       SeedDemo: ${SEED_DEMO:-false}
+      APP_TIMEZONE: ${APP_TIMEZONE:-America/Mexico_City}
+      TZ: ${APP_TIMEZONE:-America/Mexico_City}
     depends_on:
       postgres:
         condition: service_healthy

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PluriOne.Shared;
 using PluriOne.Shared.Auth;
 using PluriOne.Web.Contracts;
 using PluriOne.Web.Services;
@@ -156,8 +157,8 @@ public sealed class IndexModel : PageModel
         }
         else
         {
-            DisplayYear = DateTime.Now.Year;
-            DisplayMonth = DateTime.Now.Month;
+            DisplayYear = ZonaEmpresa.Ahora().Year;
+            DisplayMonth = ZonaEmpresa.Ahora().Month;
         }
 
         SelectedDate = selected;

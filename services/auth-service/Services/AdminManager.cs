@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PluriOne.AuthService.Data;
 using PluriOne.AuthService.Dtos;
+using PluriOne.Shared;
 
 namespace PluriOne.AuthService.Services;
 
@@ -157,7 +158,7 @@ public sealed class AdminManager
             .ToListAsync();
 
         return events
-            .GroupBy(e => DateOnly.FromDateTime(e.UtcDateTime))
+            .GroupBy(e => DateOnly.FromDateTime(ZonaEmpresa.Local(e).DateTime))
             .Select(g => new AuditDaySummary(g.Key.ToString("yyyy-MM-dd"), g.Count()))
             .ToList();
     }

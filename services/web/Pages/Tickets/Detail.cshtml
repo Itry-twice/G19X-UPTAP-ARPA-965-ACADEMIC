@@ -29,7 +29,7 @@
                 <span class="badge">@t.CategoryName</span>
             }
         </div>
-        <p class="small muted">Solicitado por <strong>@t.RequesterName</strong> · @t.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm") · Origen: @t.Source</p>
+        <p class="small muted">Solicitado por <strong>@t.RequesterName</strong> · @ZonaEmpresa.Local(t.CreatedAt).ToString("dd/MM/yyyy HH:mm") · Origen: @TicketSource.Label(t.Source)</p>
 
         @if (!string.IsNullOrEmpty(t.Description))
         {
@@ -88,7 +88,7 @@
                 @foreach (var h in t.History)
                 {
                     <li>@(h.FromStatus is null ? "—" : TicketStatus.Label(h.FromStatus)) → <strong>@TicketStatus.Label(h.ToStatus)</strong>
-                        <span class="small muted">· @h.ChangedAt.ToLocalTime().ToString("dd/MM HH:mm")</span>
+                        <span class="small muted">· @ZonaEmpresa.Local(h.ChangedAt).ToString("dd/MM HH:mm")</span>
                     </li>
                 }
             </ul>
@@ -105,7 +105,7 @@
     @foreach (var c in t.Comments)
     {
         <div style="border:2px solid var(--ink); border-radius:var(--radius); padding:10px 14px; margin-bottom:10px;">
-            <div class="small muted"><strong>@c.AuthorName</strong> · @c.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+            <div class="small muted"><strong>@c.AuthorName</strong> · @ZonaEmpresa.Local(c.CreatedAt).ToString("dd/MM/yyyy HH:mm")</div>
             <p style="margin:4px 0 0;">@c.Body</p>
         </div>
     }

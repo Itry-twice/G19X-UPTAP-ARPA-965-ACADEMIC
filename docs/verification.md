@@ -54,7 +54,7 @@ docker exec -it plurione-ai-service python ingest_cli.py
 ## 5. Pruebas automatizadas
 
 ```bash
-# .NET (47 pruebas)
+# .NET (58 pruebas)
 dotnet test tests/PluriOne.Tests/PluriOne.Tests.csproj
 
 # AI Service (17 pruebas)
@@ -68,7 +68,7 @@ python tests/e2e/integration_test.py
 
 Última corrida en verde: 29-oct-2026, commit `1444247`.
 
-- Build y tests (.NET): 47 pruebas, correctas
+- Build y tests (.NET): 58 pruebas, correctas
 - Tests (AI Service): 17 pruebas, correctas
 
 Enlace: https://github.com/Itry-twice/G19X-UPTAP-ARPA-965-ACADEMIC/actions/runs/40837198248

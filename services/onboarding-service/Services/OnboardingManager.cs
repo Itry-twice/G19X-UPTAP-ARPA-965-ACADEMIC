@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PluriOne.OnboardingService.Data;
 using PluriOne.OnboardingService.Dtos;
+using PluriOne.Shared;
 using PluriOne.Shared.Auth;
 
 namespace PluriOne.OnboardingService.Services;
@@ -28,7 +29,7 @@ public sealed class OnboardingManager
             FullName = string.IsNullOrWhiteSpace(user.FullName) ? user.Email : user.FullName,
             Email = user.Email,
             Position = "Nuevo colaborador (DEMO)",
-            StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            StartDate = ZonaEmpresa.Hoy(),
             CreatedAt = DateTimeOffset.UtcNow
         };
         _db.Employees.Add(employee);

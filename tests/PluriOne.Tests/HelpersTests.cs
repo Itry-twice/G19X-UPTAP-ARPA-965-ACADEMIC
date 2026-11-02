@@ -41,4 +41,22 @@ public class HelpersTests
     [InlineData(null, "")]
     public void TicketStatus_traduce(string? valor, string esperado)
         => Assert.Equal(esperado, TicketStatus.Label(valor));
+
+    [Theory]
+    [InlineData("manual", "Manual")]
+    [InlineData("assistant", "Asistente virtual")]
+    [InlineData("otro_valor", "otro_valor")]
+    [InlineData(null, "")]
+    public void TicketSource_traduce(string? valor, string esperado)
+        => Assert.Equal(esperado, TicketSource.Label(valor));
+
+    [Theory]
+    [InlineData("setup", "Configuración")]
+    [InlineData("compliance", "Cumplimiento")]
+    [InlineData("onboarding", "Integración")]
+    [InlineData("general", "General")]
+    [InlineData("otro_valor", "otro_valor")]
+    [InlineData(null, "")]
+    public void TaskCategory_traduce(string? valor, string esperado)
+        => Assert.Equal(esperado, TaskCategory.Label(valor));
 }
