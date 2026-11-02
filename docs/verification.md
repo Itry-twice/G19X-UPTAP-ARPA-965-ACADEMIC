@@ -66,9 +66,9 @@ python tests/e2e/integration_test.py
 
 ## 6. Integración continua
 
-Última corrida en verde: 29-oct-2026, commit `1444247`.
+Última corrida en verde: 02-nov-2026, commit `ef95e76`.
 
 - Build y tests (.NET): 58 pruebas, correctas
 - Tests (AI Service): 17 pruebas, correctas
 
-Enlace: https://github.com/Itry-twice/G19X-UPTAP-ARPA-965-ACADEMIC/actions/runs/40837198248
+Enlace: https://github.com/Itry-twice/G19X-UPTAP-ARPA-965-ACADEMIC/actions/runs/41529977500
