@@ -4,7 +4,7 @@ Esta carpeta contiene evidencia de que el sistema funciona de punta a punta.
 
 ## Recorrido end-to-end (automatizado)
 
-Última corrida: 02-nov-2026, commit `COMMIT_HASH`.
+Última corrida: 02-nov-2026, commit `ffa2a22`.
 
 `integration_test_output.txt` — salida de `tests/e2e/integration_test.py`, ejecutado con el stack en Docker.
 
