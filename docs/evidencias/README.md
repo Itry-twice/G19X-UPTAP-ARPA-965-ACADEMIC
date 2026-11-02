@@ -56,11 +56,14 @@ python tests/e2e/integration_test.py
 8. **Perfil con el rol en español** — Colaborador / Recursos Humanos / Administrador.
    ![Perfil con rol en español](perfil-rol-es.png)
 
-9. **Onboarding con estados de tareas** — tareas en «Pendiente» y «Completada».
-   ![Onboarding con tareas](onboarding-tareas-estados.png)
+9. **Checklist con los tres estados** — Pendiente, En proceso, Completada.
+   ![Checklist con tres estados](checklist-tres-estados.png)
 
 10. **Ticket «Cerrada» en tema oscuro** — la etiqueta se lee sobre el fondo oscuro.
     ![Cerrada en tema oscuro](tickets-cerrada-oscuro.png)
 
 11. **Chat con tabla de comparación** — el asistente responde con una tabla renderizada.
     ![Chat con tabla](chat-tabla-comparacion.png)
+
+12. **Perfil en tema claro** — el botón «Perfil» es visible en la barra.
+    ![Perfil en tema claro](perfil-tema-claro.png)
